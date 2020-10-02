@@ -1,18 +1,36 @@
 ---
-title: "Fiche Bilan-Projet Université de Strasbourg"
+title: "Fiche Bilan-Projet"
 author: "CPESR"
 date: "28/09/2020"
-output: github_document 
+output:
+  pdf_document:
+    number_sections: yes
+  word_document: default
+  github_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.align="center")
+
 
 library(tidyverse)
 library(kpiESR)
 library(ggthemes)
+library(cowplot)
 
-uai <- esr.uais$Université$`Université de Strasbourg`
+# uai <- esr.uais$Université$`Université de Strasbourg`
+# uai <- esr.uais$Université$`Université Paris-Est Marne-la-Vallée`
+# 
+# uai <- esr.uais$Université$`Université de Caen Normandie`
+# uai <- esr.uais$Université$`Université Toulouse - Jean Jaurès`
+# 
+# uai <- esr.uais$Université$`Université de Limoges`
+# uai <- esr.uais$Université$`Université de Pau et des Pays de l'Adour`
+# uai <- esr.uais$Université$`Université Sorbonne Paris Nord`
+# uai <- esr.uais$Université$`Université de Reims Champagne-Ardenne`
+ uai <- esr.uais$Université$`Université de Nantes`
+
 source("fbpESR.R")
 library(wikidataESR)
 
@@ -42,60 +60,141 @@ Cette fiche bilan-projet vise à faciliter les élections dans les conseils cent
 
 Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. Cependant, son appropriation par les candidats et électeurs doit permettre de poser les bases d'un débat électoral sur le projet détablissement.
 
-## Structure et organisation
+Elle se base pour l'essentiel sur la méthodologie utilisée pour élaborer les [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
 
-```{r load, include=FALSE}
+# Fiche bilan-projet de `r etab.libellé`
+
+__Attention :__ Les pointeurs vers les documents sont ceux de l'Université de Strasbourg, simplement à titre de démonstration.
+
+- Documents clés :
+  - [Bilan social](https://www.unistra.fr/fileadmin/upload/intranet-ent/RH/Conditions_de_travail/Bilans_sociaux/Bilan_social_2018.pdf)
+  - [Rapport d'activité](https://www.unistra.fr/fileadmin/upload/unistra/universite/documents_presentation/Rapport_Activites_2019_web.pdf)
+  - [Lettre d'orientation budgétaire](https://ged.unistra.fr/nuxeo/nxfile/default/3b96315b-2211-4128-84dc-ae4998e5d72c/blobholder:0/Point%203%20-%20LOB%202020.pdf)
+  - [Rapport annuel de performances](https://ged.unistra.fr/nuxeo/nxfile/default/31dd0d00-a208-46b5-822b-b15965117cec/blobholder:0/UNISTRA_CF_2019.pdf)
+  - [Autres documents clés](https://www.unistra.fr/index.php?id=18220))
+- Classements :
+  - [ARWU](http://www.shanghairanking.com/World-University-Rankings/University-of-Strasbourg.html)
+  - [QS WUR](https://www.topuniversities.com/universities/universite-de-strasbourg)
+  - [THE](https://www.timeshighereducation.com/world-university-rankings/university-strasbourg#pane-university-rankings-chart)
+  - [Réussite en Licence](http://etudiant.aujourdhui.fr/etudiant/info/classement-des-universites-le-palmares-selon-le-taux-de-reussite-en-licence.html)
+
+
+## Profil général
+
+Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon des indicateurs clés de performance (dont la description détaillée est disponible dans la suite). Chaque université est représentée par un point. La moyenne est inscrite dans une boite, et l'axe vertical représente l'écart à la moyenne.
+
+```{r profil.general, out.width = "70%", fig.width = 6, fig.height = 3}
+plots$k.norm
+```
+_Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles :
+
+ - un périmètre non exhaustif : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
+ - une granularité limitée à l'établissement : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.
+
+
+# Structure et organisation
+
+```{r struct.setup, include=FALSE}
   wdesr_load_cache()
   wdid <- substr(etab$url.wikidata,33,50)[1]
+  knitr::opts_chunk$set(fig.width = 6, fig.height = 4, out.width = "80%", fig.align="center")
 ```
 
-### Historique
+## Historique
 
 L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.
 
-```{r histoire}
+```{r histoire, fig.width=9, fig.height=5}
+try(
   wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
                       node_label = "alias_date",
                       legend_position="none",
-                      node_sizes = 40, arrow_gap = 0.17, margin_y = 0.15) +
+                      node_sizes = 40, arrow_gap = 0.15, margin_y = 0.15) +
   ggtitle(paste("Historique de",etab.libellé))
+)
 ```
 
-_Futur envisagé : Est-ce que des fusions ou fissions sont envisagées ?_ 
+_Projet politique : Quelles fusions ou des séparations sont envisagées ?_ 
 
 
-### Associations
+## Associations
 
 Les associations montrent les adhésions à des organisations externes à l'établissement.
 
 ```{r associations}
+try(
   wdesr_load_and_plot(wdid, c('composante_de', 'associé_de', 'membre_de'), depth=2, 
                       legend_position="none", margin_y = 0.1) +
   ggtitle(paste("Associations de",etab.libellé))
+)
 ```
 
-_Futur envisagé : Est-ce que des créations ou suppressions d'associations sont envisagées ?_ 
+_Projet politique : Quelles créations ou suppressions d'associations sont envisagées ?_ 
 
-### Composition
+## Composition
 
-La composition montre la structuration interne de l'établissement.
+_Définition._ La composition montre la structuration interne de l'établissement.
 
 ```{r composition, fig.width=8}
+try(
   wdesr_load_and_plot(wdid, c('composante','associé'), depth=2,
                       legend_position="left") +
   ggtitle(paste("Composition de",etab.libellé))
+)
   wdesr_save_cache()
 ```
 
-_Futur envisagé : Est-ce que des modifications de la structure interne sont envisagées ?_ 
+_Projet politique : Quelles modifications de la structure interne sont envisagées ?_ 
 
 
-## Indicateurs clés de performance
+# Indicateurs clés de performance
+
+```{r kpi.setup}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 2, out.width = "100%", fig.align="center")
+```
+
+## Profil des étudiants
+
+_Définition :_ Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).
+
+```{r profil.etu}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$etu.abs,plots$absnorm$etu.norm))
+```
+
+_Projet politique : Quelles modifications de l'offre de formation sont envisagées ?_ 
 
 
-### Taux de ressources propres
+## Profil des enseignants
 
-_Définition._ Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services. La source principale de ressources propres reste les frais d'inscription des étudiants.
+_Définition :_ Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.
+
+```{r profil.ens}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$ens.abs,plots$absnorm$ens.norm))
+```
+
+_Projet politique : Quelles modifications des effectifs enseignants sont envisagées ?_ 
+
+## Profil budgétaire
+
+_Définition :_ Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.
+
+
+```{r profil.fin}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$fin.abs,plots$absnorm$fin.norm))
+```
+_Projet politique : Quelles modifications du profil budgétaires sont envisagées ?_ 
+
+
+
+# Evolutions
+
+```{r evol.setup}
+knitr::opts_chunk$set(fig.width = 7, fig.height = 4, out.width = "70%", fig.align="center")
+```
+
+## Taux de ressources propres
+
+_Définition :_ Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services. La source principale de ressources propres reste les frais d'inscription des étudiants.
 
 Le taux de ressources propres médian des universités en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.proPres")$med)`.
 
@@ -114,9 +213,9 @@ _Commentaires :_
 
 
 
-### Taux de d'encadrement
+## Taux de d'encadrement
 
-_Définition._ Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).
+_Définition :_ Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).
 
 Le taux d'encadrement médian des universités en `r rentrée.last` est : `r round(filter(esr.stats, kpi == "kpi.K.titPetu")$med,2)`.
 
@@ -136,9 +235,9 @@ _Commentaires :_
 
 
 
-### Taux de titularité des enseignants
+## Taux de titularité des enseignants
 
-_Définition._ Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants : titulaires, doctorants avec mission d'enseignement et contractuels type LRU, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires.
+_Définition :_ Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants : titulaires, doctorants avec mission d'enseignement et contractuels type LRU, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.
 
 Le taux de titularité médian des universités  en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.titPens")$med)`.
 
@@ -157,9 +256,9 @@ _Commentaires :_
 
 
 
-### Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires
+## Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires
 
-_Définition._ Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires est une mesure de la politique RH de l'établissement. Il indique la proportion des enseignements qui sont assurées par des vacataires.
+_Définition :_ Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires est une mesure de la politique RH de l'établissement. Il indique la proportion des enseignements qui sont assurées par des vacataires.
 
 ```{r kpi.K.hcvPhee}
 thekpi="kpi.K.hcvPhee"
@@ -175,14 +274,14 @@ _Commentaires :_
 
 
 
-### Nombre d'heures complémentaires moyen par enseignant titulaire
+## Nombre d'heures complémentaires moyen par enseignant titulaire
 
-_Définition._ Le nombre d'heures complémentaires moyen par enseignant titulaire est une mesure des politiques RH et d'enseignement de l'établissement. Il indique, en moyenne, combien d'heures doivent effectuer les enseignants et enseignants-chercheurs au delà de leur service statutaire. Il ne permet pas de capturer l'hétérogénité de cette charge entre les personnels.
+_Définition :_ Le nombre d'heures complémentaires moyen par enseignant titulaire est une mesure des politiques RH et d'enseignement de l'établissement. Il indique, en moyenne, combien d'heures doivent effectuer les enseignants et enseignants-chercheurs au delà de leur service statutaire. Il ne permet pas de capturer l'hétérogénité de cette charge entre les personnels.
 
 
 ```{r kpi.K.hctPtit}
 thekpi="kpi.K.hctPtit"
-thekpiname="Nombre d'heures complémentaires moyen par enseignant titulaire"
+thekpiname="Nombre d'heures comp' moyen par enseignant titulaire"
 evol.graph(thekpi, data=extra.pnl) + ggtitle(thekpiname, paste("à ",etab.libellé)) 
 ```
 
@@ -196,9 +295,9 @@ _Commentaires :_
 
 
 
-### Nombre d'heures d'enseignement moyen par étudiant
+## Nombre d'heures d'enseignement moyen par étudiant
 
-_Définition._ Le nombre d'heures d'enseignement moyen par étudiant est une mesure de la politique d'enseignement de l'établissement. Il reflète à la fois le volume d'heures délivré et la taille des groupes : il augmente avec la diversité de l'offre de formation et le nombre d'heures par formation, et il baisse avec le nombre d'étudiants par groupe. Il ne capture par l'hétérogénité des formations de l'établissement.
+_Définition :_ Le nombre d'heures d'enseignement moyen par étudiant est une mesure de la politique d'enseignement de l'établissement. Il reflète à la fois le volume d'heures délivré et la taille des groupes : il augmente avec la diversité de l'offre de formation et le nombre d'heures par formation, et il baisse avec le nombre d'étudiants par groupe. Il ne capture par l'hétérogénité des formations de l'établissement.
 
 ```{r kpi.K.heePetu}
 thekpi="kpi.K.heePetu"

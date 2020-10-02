@@ -17,6 +17,10 @@ ni capturer toute la complexité des sujets qu’elle aborde. Cependant,
 son appropriation par les candidats et électeurs doit permettre de poser
 les bases d’un débat électoral sur le projet détablissement.
 
+Elle se base pour l’essentiel sur la méthodologie utilisée pour élaborer
+les [tableaux de bord de
+l’ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
+
 ## Structure et organisation
 
 ### Historique

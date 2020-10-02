@@ -1,4 +1,5 @@
 
+missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) + geom_text() + xlim(-5,5) + ylim(-5,5) + theme_void()
 
 percent_format <- function(x) {
   sprintf("%+0.1f%%", round(x*100,1))
@@ -23,6 +24,9 @@ netab <- esr.pnl %>%
 netab <- max(netab$n)
 
 
+if(!file.exists(paste0("extradata/",uai,".csv"))) {
+  extra.pnl <- NULL
+} else {
 extra.pnl <- 
   read.csv(paste0("extradata/",uai,".csv")) %>%
     merge(etab) %>%
@@ -40,9 +44,10 @@ extra.pnl <-
         TRUE ~ as.character(round(value,1.0)),
       )
     )
-
+}
 
 evol.graph <- function(thekpi, data = etab.pnl) {
+  if(is.null(data)) return(missingdataplot)
   data %>%
     filter(kpi == thekpi) %>%
     mutate(
@@ -58,6 +63,15 @@ evol.graph <- function(thekpi, data = etab.pnl) {
     theme_hc() + guides(fill = FALSE)
 }
 
+small_style <- kpiesr_style(
+  point_size = 12,
+  line_size = 2,
+  text_size = 3,
+  primaire_plot.margin = ggplot2::unit(c(0.25,0,0,0), "cm"),
+  bp_width = 1,
+  bp_text_x = -0.21 )
+
+plots <- kpiesr_plot_all(2018, uai, style.kpi=small_style)
 
 txt_val <- function(thekpi, therentrée, data = etab.pnl) {
   filter(data,kpi == thekpi, Rentrée == therentrée)$value_label
@@ -74,6 +88,7 @@ txt_evol <- function(thekpi, therentrée1, therentrée2, data = etab.pnl) {
 }
 
 txt_obs <- function(etab.libellé, thekpiname, thekpi, therentrée1, therentrée2, data = etab.pnl, obs = TRUE) {
+  if(is.null(data)) return("Données manquantes")
   paste0(
     "Le ", thekpiname, " de ", etab.libellé, " est passé de ",
     txt_val(thekpi, rentrée.ref, data), " en ", therentrée1, 
@@ -83,3 +98,6 @@ txt_obs <- function(etab.libellé, thekpiname, thekpi, therentrée1, therentrée
     ". Son évolution sur cette période est de ", txt_evol(thekpi, therentrée1, therentrée2, data),
     ".")
 }
+
+
+
