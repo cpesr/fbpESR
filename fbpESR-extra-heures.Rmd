@@ -1,0 +1,62 @@
+
+# Les heures d'enseignement
+
+## Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires
+
+_Définition :_ Le taux d'heures d'enseignement complémentaires effectuées par des personnels non-titulaires est une mesure de la politique RH de l'établissement. Il indique la proportion des enseignements qui sont assurées par des vacataires.
+
+```{r kpi.K.hcvPhee}
+thekpi="kpi.H.hcvPhee"
+thekpiname="Taux d'heures complémentaires effectuées par\ndes personnels non-titulaires"
+evol.graph(fbp, thekpi)
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last, obs=FALSE)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? 
+
+
+
+## Nombre d'heures complémentaires moyen par enseignant titulaire
+
+_Définition :_ Le nombre d'heures complémentaires moyen par enseignant titulaire est une mesure des politiques RH et d'enseignement de l'établissement. Il indique, en moyenne, combien d'heures doivent effectuer les enseignants et enseignants-chercheurs au delà de leur service statutaire. Il ne permet pas de capturer l'hétérogénité de cette charge entre les personnels.
+
+
+```{r kpi.K.hctPtit}
+thekpi="kpi.H.hctPtit"
+thekpiname="Nombre d'heures complémentaire moyen par enseignant titulaire"
+evol.graph(fbp, thekpi) 
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last, obs=FALSE)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? 
+
+
+
+
+## Nombre d'heures d'enseignement moyen par étudiant
+
+_Définition :_ Le nombre d'heures d'enseignement moyen par étudiant est une mesure de la politique d'enseignement de l'établissement. Il reflète à la fois le volume d'heures délivré et la taille des groupes : il augmente avec la diversité de l'offre de formation et le nombre d'heures par formation, et il baisse avec le nombre d'étudiants par groupe. Il ne capture par l'hétérogénité des formations de l'établissement.
+
+```{r kpi.K.heePetu}
+thekpi="kpi.H.heePetu"
+thekpiname="Nombre d'heures d'enseignement moyen par étudiant"
+evol.graph(fbp, thekpi)
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last, obs=FALSE)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? 
+
+
+

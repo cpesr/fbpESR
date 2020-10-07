@@ -1,22 +1,13 @@
 
-missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) + geom_text() + xlim(-5,5) + ylim(-5,5) + theme_void()
+source("fbpESR-extradata.R")
 
-percent_format <- function(x) {
-  sprintf("%+0.1f%%", round(x*100,1))
-}
+missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) + 
+  geom_text() + xlim(-5,5) + ylim(-5,5) + theme_void()
 
-rentrée.ref = 2012
-rentrée.last = 2018
-
-esr.stats <- esr.pnl %>%
-  filter(Rentrée == rentrée.last, Type == "Université") %>%
-  group_by(kpi) %>%
+esr.stats <- kpiESR::esr.pnl %>% na.omit() %>%
+  filter(Type == "Université") %>%
+  group_by(kpi, Rentrée) %>%
   summarise(moy = mean(value,na.rm=T),med = median(value,na.rm=T))
-
-etab.pnl <- filter(esr.pnl, UAI == uai, Rentrée >= rentrée.ref)
-etab <- filter(esr, UAI == uai, Rentrée >= rentrée.ref)
-
-etab.libellé <- paste0("l'",as.character(etab.pnl[1,"Libellé"]))
 
 netab <- esr.pnl %>%
   group_by(Rentrée) %>%
@@ -24,42 +15,17 @@ netab <- esr.pnl %>%
 netab <- max(netab$n)
 
 
-if(!file.exists(paste0("extradata/",uai,".csv"))) {
-  extra.pnl <- NULL
-} else {
-extra.pnl <- 
-  read.csv(paste0("extradata/",uai,".csv")) %>%
-    merge(etab) %>%
-    transmute (
-      Rentrée = Rentrée,
-      UAI = UAI,
-      kpi.K.heePetu = kpi.HEC.P.heures / (kpi.ETU.S.cycle.1.L + kpi.ETU.S.cycle.2.M),
-      kpi.K.hctPtit = kpi.HEC.S.heures_comp_tit / kpi.ENS.S.titulaires,
-      kpi.K.hcvPhee = (kpi.HEC.S.heures_comp - kpi.HEC.S.heures_comp_tit) / kpi.HEC.P.heures
-    ) %>%
-  pivot_longer(-c(Rentrée,UAI), names_to="kpi") %>%
-    mutate(
-      value_label = case_when(
-        kpi == "kpi.K.hcvPhee" ~ scales::percent(value,0.1),
-        TRUE ~ as.character(round(value,1.0)),
-      )
-    )
-}
 
-evol.graph <- function(thekpi, data = etab.pnl) {
-  if(is.null(data)) return(missingdataplot)
-  data %>%
+evol.graph <- function(fbp, thekpi) {
+  fbp$etab.pnl %>%
     filter(kpi == thekpi) %>%
-    mutate(
-      Evolution = value / first(value) - 1
-    ) %>%
     ggplot(aes(x=Rentrée,y=Evolution, label=value_label, group=1)) + 
     #geom_vline(xintercept=c("2012","2016")) +
     geom_line(size=1) + 
-    geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 13, stroke = 1) + 
+    geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) + 
     geom_text(color="black", fontface="bold") +
-    scale_y_continuous(labels = percent_format, limits=c(-0.2,0.35)) +
-    scale_fill_distiller(palette = "RdBu", limits=c(-0.35,0.35)) +
+    scale_y_continuous(labels = percent_format, limits=fbp$limits.evolution) +
+    scale_fill_distiller(palette = "RdBu", limits=fbp$limits.evolution) +
     theme_hc() + guides(fill = FALSE)
 }
 
@@ -71,31 +37,51 @@ small_style <- kpiesr_style(
   bp_width = 1,
   bp_text_x = -0.21 )
 
-plots <- kpiesr_plot_all(2018, uai, style.kpi=small_style)
-
-txt_val <- function(thekpi, therentrée, data = etab.pnl) {
-  filter(data,kpi == thekpi, Rentrée == therentrée)$value_label
+dotation.graph <- function(fbp) {
+  fbp$etab.pnl %>%
+    filter(str_detect(kpi, "kpi.D" )) %>%
+    ggplot(aes(x=Rentrée,y=value, label=value_label, group=kpi, color=kpi)) + 
+    #geom_vline(xintercept=c("2012","2016")) +
+    geom_line(size=1) + 
+    #geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) + 
+    #geom_text(color="black", fontface="bold") +
+    scale_color_brewer(
+      limits = c("kpi.D.vieetu","kpi.D.ens","kpi.D.aapens", "kpi.D.rech","kpi.D.aaprech"),
+      labels = c("Vie étudiante","Enseignement","Enseignement (AAPI)", "Recherche", "Recherche (AAPI)"),
+      name = "Dotations N1-N2",
+      palette = "Paired", direction = -1
+    ) +
+    scale_y_continuous(labels = euro_k, name = "Dotation") +
+    theme_hc() + guides(fill = FALSE) +
+    theme(legend.position="right")
 }
 
-txt_rang <- function(thekpi, therentrée) {
-  rang <- filter(etab.pnl,kpi == thekpi, Rentrée == therentrée)$rang
+#dotation.graph(fbp)
+
+txt_val <- function(fbp, thekpi, therentrée) {
+  filter(fbp$etab.pnl, kpi == thekpi, Rentrée == therentrée)$value_label
+}
+
+txt_rang <- function(fbp, thekpi, therentrée) {
+  rang <- filter(fbp$etab.pnl, kpi == thekpi, Rentrée == therentrée)$rang
   paste0(rang,"/",netab)
 }
 
-txt_evol <- function(thekpi, therentrée1, therentrée2, data = etab.pnl) {
-  filter(data, kpi == thekpi, Rentrée %in% c(therentrée1,therentrée2)) %>%
-    summarise(evol = percent_format(last(value) / first(value) - 1))
+txt_evol <- function(fbp, thekpi, therentrée1, therentrée2) {
+  filter(fbp$etab.pnl, kpi == thekpi, Rentrée %in% c(therentrée1,therentrée2)) %>%
+    summarise(evol = percent_format(last(value) / first(value) - 1)) %>%
+    select(evol) %>%
+    as.character()
 }
 
-txt_obs <- function(etab.libellé, thekpiname, thekpi, therentrée1, therentrée2, data = etab.pnl, obs = TRUE) {
-  if(is.null(data)) return("Données manquantes")
+txt_obs <- function(fbp, thekpiname, thekpi, therentrée1, therentrée2, obs = TRUE) {
   paste0(
-    "Le ", thekpiname, " de ", etab.libellé, " est passé de ",
-    txt_val(thekpi, rentrée.ref, data), " en ", therentrée1, 
-    ifelse(obs, paste0(" (classement : ", txt_rang(thekpi, therentrée1),")"),""),
-    " à ", txt_val(thekpi, therentrée2, data), " en ", therentrée2, 
-    ifelse(obs, paste0(" (classement : ", txt_rang(thekpi, therentrée2), ")"),""), 
-    ". Son évolution sur cette période est de ", txt_evol(thekpi, therentrée1, therentrée2, data),
+    "Le ", thekpiname, " de ", fbp$Libellé, " est passé de ",
+    txt_val(fbp, thekpi, rentrée.ref), " en ", therentrée1, 
+    ifelse(obs, paste0(" (classement : ", txt_rang(fbp, thekpi, therentrée1),")"),""),
+    " à ", txt_val(fbp, thekpi, therentrée2), " en ", therentrée2, 
+    ifelse(obs, paste0(" (classement : ", txt_rang(fbp, thekpi, therentrée2), ")"),""), 
+    ". Son évolution sur cette période est de ", txt_evol(fbp, thekpi, therentrée1, therentrée2),
     ".")
 }
 
