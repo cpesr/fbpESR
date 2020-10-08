@@ -1,7 +1,7 @@
 ---
 author: |
-  | "CPESR"
-  | [cpesr.fr](https://cpesr.fr)
+  | CPESR
+  | [www.cpesr.fr](https://cpesr.fr)
   | contact@cpesr.fr
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
@@ -24,7 +24,7 @@ lang: "fr-FR"
 classoption: landscape
 ---
 
-```{r config, echo=FALSE, warning = FALSE, message = FALSE}
+```{r config, include=FALSE}
 
 rentrée.ref = 2012
 rentrée.last = 2018

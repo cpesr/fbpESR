@@ -30,7 +30,7 @@ rentrée.ref = 2012
 rentrée.last = 2018
 
 type = "Université"
-libellé = "Université de Caen Normandie"
+libellé = "Université de Tours"
 
 wikidataESR::wdesr_load_cache()
 ```
@@ -38,14 +38,15 @@ wikidataESR::wdesr_load_cache()
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
 ```
 
-<!-- ```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE} -->
-<!-- ``` -->
+```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE}
+```
 
 <!-- ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE} -->
 <!-- ``` -->
 
-<!-- ```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE} -->
-<!-- ``` -->
+```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE}
+```
+
 
 ```{r wdsave, warning = FALSE, message = FALSE, input = FALSE}
 wikidataESR::wdesr_save_cache()

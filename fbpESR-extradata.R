@@ -1,26 +1,8 @@
 library(tidyverse)
 
+read.extradata <- function(libellé) {
 
-read.extradata <- function() {
-  ed1 <- read.csv("results-survey881846-v1.csv") %>%
-    rename(
-      documents.lien1. = bilans.bil1.,
-      documents.lien2. = bilans.bil2.
-    ) %>%
-    mutate(
-      documents.nom1. = "Enquête auprès des personnels",
-      documents.nom2. = "Bilan de l'Université de Strasbourg"
-    )
-  
-  ed2 <- read.csv("results-survey881846-v2.csv")
-  
-  ed <- merge(ed1,ed2,all=TRUE)
-  return(ed)
-}
-
-process_extradata <- function(extradata, libellé) {
-
-  df <- extradata %>%
+  df <- read.csv("extradata/extradata.csv") %>%
     mutate(
       Libellé = paste0(na.omit(Universite,Universite.other.,
                             greta, greta.other.,
@@ -69,30 +51,26 @@ process_extradata <- function(extradata, libellé) {
       values_from = value)
   
   
-  extradata.liens <-
-    merge(
-      df %>% 
-        select(starts_with("hecliens.")) %>% 
-        pivot_longer(
-          cols = everything(),
-          names_pattern = "hecliens.(20..).",
-          names_to = c("Rentrée"),
-          values_to = "heures.liens"
-          ),
-      
-      df %>% select(starts_with("dotliens.")) %>% 
-        pivot_longer(
-          cols = everything(),
-          names_pattern = "dotliens.(20..).",
-          names_to = c("Rentrée"),
-          values_to = "dotations.liens"
-        )
-    )
-  
-  
   return(list(extradata = df, 
-              extradata.kpi = extradata.kpi, 
-              extradata.liens = extradata.liens))
+              extradata.kpi = extradata.kpi))
+}
+
+get_extradata_array <- function(extradata, qid, twodim = FALSE) {
+  pat <- ifelse(twodim, paste0(qid,".(.*)_(.*)."), paste0(qid,".(.*)(.*)."))
+  extradata %>%
+    select(starts_with(paste0(qid,"."))) %>% 
+    pivot_longer(
+      cols = everything(),
+      names_pattern = pat,
+      names_to = c("key1","key2"),
+      values_to = "value"
+    ) %>% 
+    filter(!is.na(value), !value == "") %>%
+    { if(!twodim) mutate(., key2 = "lien") else . } %>% 
+    pivot_wider(
+      names_from = key2,
+      values_from = value
+    )
 }
 
 percent_format <- function(x) {
@@ -108,6 +86,12 @@ merge_and_add_kpis <- function(fbp) {
   fbp$etab <- merge(all = TRUE,
     fbp$etab,
     fbp$extradata.kpi) 
+  
+  if(fbp$extradata$hecunite == "Heures") {
+    hec.labels <- function(value) paste(round(value,1.0),"h")
+  } else {
+    hec.labels <- function(value) paste(format(round(value/1000,2), big.mark=" "),"k€")
+  }
   
   fbp$etab.pnl <- fbp$etab %>%
     transmute (
@@ -127,7 +111,7 @@ merge_and_add_kpis <- function(fbp) {
       value_label = case_when(
         kpi == "kpi.H.hcvPhee" ~ scales::percent(value,0.1),
         startsWith(kpi, "kpi.D") ~ euro_k(value),
-        TRUE ~ paste(round(value,1.0),"h"),
+        TRUE ~ hec.labels(value),
       )
     ) %>%
     filter(!is.na(value)) %>%
@@ -142,9 +126,7 @@ merge_and_add_kpis <- function(fbp) {
 
 fbp_get_data <- function(type, libellé, rentrée.min = 2000) {
 
-  extradata <- read.extradata()
-  
-  fbp <- process_extradata(extradata, libellé)
+  fbp <- read.extradata(libellé)
   
   fbp$Libellé <- libellé
   fbp$UAI <- kpiESR::esr.uais[[type]][[libellé]]
@@ -177,5 +159,6 @@ fbp_get_data <- function(type, libellé, rentrée.min = 2000) {
 # fbp1 <- fbp_get_data("Université", "Université de test")
 # fbp2 <- fbp_get_data("Université", "Université de Lorraine")
 # fbp3 <- fbp_get_data("Université", "Université de Strasbourg", 2012)
+# fbp <- fbp_get_data("Université", "Université de Tours", 2012)
 # 
 

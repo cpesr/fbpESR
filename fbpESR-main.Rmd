@@ -26,30 +26,19 @@ knitr::opts_chunk$set(fig.align="center")
 knitr::opts_chunk$set(pdf.options(encoding = "CP1250"))
 
 library(tidyverse)
-library(kpiESR)
 library(ggthemes)
 library(cowplot)
-
-# uai <- esr.uais$Université$`Université de Strasbourg`
-# uai <- esr.uais$Université$`Université Paris-Est Marne-la-Vallée`
-# 
-# uai <- esr.uais$Université$`Université de Caen Normandie`
-# uai <- esr.uais$Université$`Université Toulouse - Jean Jaurès`
-# 
-# uai <- esr.uais$Université$`Université de Limoges`
-# uai <- esr.uais$Université$`Université de Pau et des Pays de l'Adour`
-# uai <- esr.uais$Université$`Université Sorbonne Paris Nord`
-# uai <- esr.uais$Université$`Université de Reims Champagne-Ardenne`
-# uai <- esr.uais$Université$`Université de Nantes`
- 
+library(kpiESR)
 library(wikidataESR)
-source("fbpESR.R")
 
+
+source("fbpESR.R")
 fbp <- fbp_get_data(type, libellé, rentrée.ref)
 
-plots <- kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
+plots <- kpiESR::kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
 
 wdid <- substr(fbp$etab$url.wikidata,33,50)[1]
+wikidataESR::wdesr_load_cache()
 ```
 
 ---
@@ -70,6 +59,8 @@ La méthodologie est essentiellement celle des [tableaux de bord de l'ESR](https
 knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
 ```
 
+
+
 ### Sources principales des données
 
 - Portail des données ouvertes du MESRI : https://data.enseignementsup-recherche.gouv.fr
@@ -89,63 +80,36 @@ _Discussion :_ Le profil général permet d'illustrer les deux limites principal
  - __un périmètre non exhaustif__ : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
  - __une granularité limitée à l'établissement__ : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.
 
-
 # Structure et organisation
 
 ```{r struct.setup, include=FALSE}
-  wdesr_load_cache()
   knitr::opts_chunk$set(fig.width = 6, fig.height = 4, out.height = "60%", fig.align="center")
 ```
 
-## Historique
 
-_Définition :_ L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.
-
-
-```{r histoire, fig.width=9, fig.height=5}
-p <- missingdataplot
-try( silent = TRUE,
-  p <- wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
-                      node_label = "alias_date",
-                      legend_position="none",
-                      node_sizes = 40, arrow_gap = 0.0, margin_y = 0.15) 
-)
-p
+```{r plot_histoire, results='asis', echo = FALSE, warning = FALSE, message=FALSE}
+invisible(make_slide(plot_histoire, "histoire", "Historique",
+"L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.",
+"- Quelles fusions, séparations ou changement de statut sont envisagées ?"))
 ```
 
-### Question politique afférente 
-Quelles fusions, séparations ou changement de statut sont envisagées ?
 
-
-## Associations
-
-_Définition :_ Les associations montrent les adhésions à des organisations externes à l'établissement.
-
-```{r associations}
-try(
-  wdesr_load_and_plot(wdid, c('composante_de', 'associé_de', 'membre_de'), depth=2, 
-                      legend_position="none", margin_y = 0.1) 
-)
+```{r plot_association, results='asis', fig.width = 6, fig.height = 4, echo = FALSE, message=FALSE}
+make_slide(plot_association, "association", "Associations",
+"Les associations montrent les adhésions à des organisations externes à l'établissement.",
+"- Quelles créations ou suppressions d'associations sont envisagées ?")
 ```
 
-### Question politique afférente 
-Quelles créations ou suppressions d'associations sont envisagées ?
 
-
-## Composition
-
-_Définition :_ La composition montre la structuration interne de l'établissement.
-
-```{r composition, fig.width=8}
-try(
-  wdesr_load_and_plot(wdid, c('composante','associé'), depth=2,
-                      legend_position="left")
-)
-  wdesr_save_cache()
+```{r plot_composition, results='asis', fig.width = 8, fig.height = 4.5, echo = FALSE, message=FALSE}
+make_slide(plot_composition, "composition", "Composition",
+"La composition montre la structuration interne de l'établissement.",
+"- Quelles modifications de la structure interne sont envisagées ?")
 ```
 
-### Question politique afférente 
-Quelles modifications de la structure interne sont envisagées ?
+```{r wdsave, include = FALSE}
+wikidataESR::wdesr_save_cache()
+```
 
 
 # Indicateurs clés de performance
@@ -154,138 +118,59 @@ Quelles modifications de la structure interne sont envisagées ?
 knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.width="100%", fig.align="center")
 ```
 
-## Profil des étudiants
 
-_Définition :_ Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).
-
-
-```{r profil.etu}
-plot_grid(ncol=2,  plotlist=list(plots$absnorm$etu.abs,plots$absnorm$etu.norm))
+```{r plot_profil_etu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$etu.abs,plots$absnorm$etu.norm), "Le profil des étudiants",
+"Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
+"- Quelles modifications du profil LMD sont envisagées ?
+- Quelles évolutions pour les DU (et autres formations payantes) sont envisagées ?")
 ```
 
 
-### Questions politiques afférentes 
-- Quelles modifications du profil LMD sont envisagées ?
-- Quelles évolutions pour les DU (et autres formations payantes) sont envisagées ?
-
-
-## Profil des enseignants
-
-_Définition :_ Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.
-
-```{r profil.ens}
-plot_grid(ncol=2,  plotlist=list(plots$absnorm$ens.abs,plots$absnorm$ens.norm))
+```{r plot_profil_ens, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$ens.abs,plots$absnorm$ens.norm), "Le profil des enseignants",
+"Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.",
+"- Quelles modifications des effectifs enseignants sont envisagées ?")
 ```
 
 
-### Question politique afférente 
-Quelles modifications des effectifs enseignants sont envisagées ?
-
-## Profil budgétaire
-
-_Définition :_ Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.
-
-
-```{r profil.fin}
-plot_grid(ncol=2,  plotlist=list(plots$absnorm$fin.abs,plots$absnorm$fin.norm))
+```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$fin.abs,plots$absnorm$fin.norm), "Le profil budgétaire",
+"Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
+"- Quelles modifications du profil budgétaires sont envisagées ?")
 ```
 
-
-### Question politique afférente 
-Quelles modifications du profil budgétaires sont envisagées ?
 
 
 
 # Evolutions
 
 ```{r evol.setup}
-knitr::opts_chunk$set(fig.width = 7, fig.height = 3, out.width = "70%", fig.align="center")
+knitr::opts_chunk$set(fig.width = 7, fig.height = 2.9, out.width = "70%", fig.align="center")
 ```
 
-## Taux de ressources propres
 
-```{=latex}
-\begin{footnotesize}
+```{r plot_proPres, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.proPres", "Le taux de ressources propres", small = TRUE,
+"Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité, qui sont généralement la source la plus importante. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
+
 ```
 
-_Définition :_ Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services. La source principale de ressources propres reste les frais d'inscription des étudiants.
 
-```{=latex}
-\end{footnotesize}
+```{r plot_titPetu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", stat_percent = FALSE,
+"Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
 ```
 
-Le taux de ressources propres médian des universités en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.proPres", Rentrée == rentrée.last)$med)`.
 
-
-```{r kpi.K.proPres}
-thekpiname="taux de ressources propres"
-thekpi="kpi.K.proPres"
-evol.graph(fbp, thekpi)
+```{r plot_titPens, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.titPens", "Le taux de titularité des enseignants", small = TRUE,
+"Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
 ```
-
-_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
-
-### Questions politiques afférentes 
-
-- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?
-
-
-
-## Taux de d'encadrement
-
-_Définition :_ Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).
-
-Le taux d'encadrement médian des universités en `r rentrée.last` est : `r round(filter(esr.stats, kpi == "kpi.K.titPetu", Rentrée == rentrée.last)$med,2)`.
-
-
-```{r kpi.K.titPetu}
-thekpi="kpi.K.titPetu"
-thekpiname="taux d'encadrement"
-evol.graph(fbp, thekpi)
-```
-
-_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
-
-### Questions politiques afférentes 
-
-- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?
-
-
-
-
-
-## Taux de titularité des enseignants
-
-```{=latex}
-\begin{footnotesize}
-```
-
-_Définition :_ Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants : doctorants avec mission d'enseignement, ATER et contractuels type LRU, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.
-
-```{=latex}
-\end{footnotesize}
-```
-
-Le taux de titularité médian des universités  en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.titPens", Rentrée == rentrée.last)$med)`.
-
-
-```{r kpi.K.titPens}
-thekpi="kpi.K.titPens"
-thekpiname="taux de titularité des enseignants"
-evol.graph(fbp, thekpi) 
-```
-
-_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
-
-### Questions politiques afférentes 
-
-- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? 
-
-
-
-
-
 

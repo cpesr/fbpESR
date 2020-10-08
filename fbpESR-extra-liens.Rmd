@@ -3,9 +3,8 @@
 
 ## Liens vers des données supplémentaires
 
-
 - Documents clés :
-  - [Chifres clés](`r fbp$extradata$docs.chcle.`)
+  - [Chiffres clés](`r fbp$extradata$docs.chcle.`)
   - [Bilan social](`r fbp$extradata$docs.pape.`)
   - [Rapport d'activité](`r fbp$extradata$docs.ra.`)
   - [Lettre d'orientation budgétaire](`r fbp$extradata$docs.lob.`)
@@ -18,19 +17,29 @@
   - [Réussite en Licence](`r fbp$extradata$rank.lic.`)
   
 
-```{r liens.strings, echo=FALSE, include=FALSE}
-  extradata.liens.heures.str <- 
-    fbp$extradata.liens %>% na.omit() %>% 
-    mutate(liens = paste0("[",Rentrée,"](",heures.liens,")")) %>% select(liens) 
-  extradata.liens.heures.str <- toString(extradata.liens.heures.str$liens)
   
-  extradata.liens.dotations.str <- 
-    fbp$extradata.liens %>% na.omit() %>% 
-    mutate(liens = paste0("[",Rentrée,"](",dotations.liens,")")) %>% select(liens) 
-  extradata.liens.dotations.str <- toString(extradata.liens.dotations.str$liens)
+- Documents additionnels :
+
+```{r doc add, results="asis", echo=FALSE, warning = FALSE, message = FALSE, error=FALSE}
+
+df <- get_extradata_array(fbp$extradata, "documents", twodim = TRUE) 
+if (nrow(df)!=0) cat(mutate(df, str = paste0("  - [",titre,"](",lien,")\n\n"))$str)
+
+df <- get_extradata_array(fbp$extradata, "hecliens") %>%
+      mutate(str = paste0("[",key1,"](",lien,")"))
+if (row(df)!=0) {
+  cat("  - Heures d'enseignement (Bilans sociaux) : ")
+  cat(df$str)
+  cat("\n\n")
+}
+
+df <- get_extradata_array(fbp$extradata, "dotliens") %>%
+      mutate(str = paste0("[",key1,"](",lien,")"))
+if (row(df)!=0) {
+  cat("  - Dotations (Budgets N1-N2) : ")
+  cat(df$str)
+  cat("\n\n")
+}
+  
+cat(error_list)
 ```
-  
-- Documents sources pour les données additionnelles :
-  - Heures d'enseignement (Bilans sociaux) : `r extradata.liens.heures.str`
-  
-  - Dotations (Budgets N1-N2) : `r extradata.liens.dotations.str`

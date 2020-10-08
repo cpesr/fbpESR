@@ -30,9 +30,7 @@ rentrée.ref = 2012
 rentrée.last = 2018
 
 type = "Université"
-libellé = "Université de Caen Normandie"
-
-wikidataESR::wdesr_load_cache()
+libellé = "Université de Limoges"
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
@@ -47,8 +45,6 @@ wikidataESR::wdesr_load_cache()
 <!-- ```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE} -->
 <!-- ``` -->
 
-```{r wdsave, warning = FALSE, message = FALSE, input = FALSE}
-wikidataESR::wdesr_save_cache()
-```
+
 
 

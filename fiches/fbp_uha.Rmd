@@ -1,7 +1,7 @@
 ---
 author: |
-  | "CPESR"
-  | [cpesr.fr](https://cpesr.fr)
+  | CPESR
+  | [www.cpesr.fr](https://cpesr.fr)
   | contact@cpesr.fr
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
