@@ -1,5 +1,4 @@
 ---
-author: "CPESR"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
   beamer_presentation:
@@ -48,27 +47,9 @@ source("fbpESR.R")
 
 fbp <- fbp_get_data(type, libellé, rentrée.ref)
 
-
 plots <- kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
 
-projet_q1 <- "D'après vous, cette politique doit être :
-
-- [ ] Prioritairement accélérée
-- [ ] Accélérée
-- [ ] Poursuivie
-- [ ] Inversée
-- [ ] Prioritairement inversée
-"
-
-projet_q2 <- "D'après vous, cette politique est :
-
-- [ ] souhaitable et prioritaire.
-- [ ] souhaitable.
-- [ ] non souhaitable mais inévitable.
-- [ ] nos souhaitable et doit être évitée.
-"
-
-projet_q <- projet_q2
+wdid <- substr(fbp$etab$url.wikidata,33,50)[1]
 ```
 
 ---
@@ -83,16 +64,17 @@ Cette fiche bilan-projet vise à faciliter les élections dans les conseils cent
 
 Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. Cependant, son appropriation par les candidats et électeurs doit permettre de poser les bases d'un débat électoral sur le projet d'établissement.
 
-Elle se base pour l'essentiel sur la méthodologie utilisée pour élaborer les [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
+La méthodologie est essentiellement celle des [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
 
 ```{r, out.height = "20%"}
 knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
 ```
 
-### Source principale des données
+### Sources principales des données
 
-Portail des données ouvertes du Ministère de l'enseignement supérieur, de la recherche et de l'innovation : https://data.enseignementsup-recherche.gouv.fr
-
+- Portail des données ouvertes du MESRI : https://data.enseignementsup-recherche.gouv.fr
+- Wikidata ([guide d'édition](https://github.com/cpesr/wikidataESR/blob/master/Rmd/wikidataESR.md)) : `r paste0("https://www.wikidata.org/wiki/",wdid)` 
+- Formulaire de création d'une fiche : https://enquete.cpesr.fr/index.php/881846
 
 
 ## Profil général
@@ -112,7 +94,6 @@ _Discussion :_ Le profil général permet d'illustrer les deux limites principal
 
 ```{r struct.setup, include=FALSE}
   wdesr_load_cache()
-  wdid <- substr(fbp$etab$url.wikidata,33,50)[1]
   knitr::opts_chunk$set(fig.width = 6, fig.height = 4, out.height = "60%", fig.align="center")
 ```
 
@@ -122,12 +103,14 @@ _Définition :_ L'historique montre les grandes étapes qui ont conduit à l'ét
 
 
 ```{r histoire, fig.width=9, fig.height=5}
-try(
-  wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
+p <- missingdataplot
+try( silent = TRUE,
+  p <- wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
                       node_label = "alias_date",
                       legend_position="none",
                       node_sizes = 40, arrow_gap = 0.0, margin_y = 0.15) 
 )
+p
 ```
 
 ### Question politique afférente 
@@ -235,7 +218,7 @@ Le taux de ressources propres médian des universités en `r rentrée.last` est 
 
 
 ```{r kpi.K.proPres}
-thekpiname="Taux de ressources propres"
+thekpiname="taux de ressources propres"
 thekpi="kpi.K.proPres"
 evol.graph(fbp, thekpi)
 ```
@@ -258,7 +241,7 @@ Le taux d'encadrement médian des universités en `r rentrée.last` est : `r rou
 
 ```{r kpi.K.titPetu}
 thekpi="kpi.K.titPetu"
-thekpiname="Taux d'encadrement"
+thekpiname="taux d'encadrement"
 evol.graph(fbp, thekpi)
 ```
 
@@ -290,7 +273,7 @@ Le taux de titularité médian des universités  en `r rentrée.last` est : `r s
 
 ```{r kpi.K.titPens}
 thekpi="kpi.K.titPens"
-thekpiname="Taux de titularité des enseignants"
+thekpiname="taux de titularité des enseignants"
 evol.graph(fbp, thekpi) 
 ```
 

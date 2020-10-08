@@ -2,7 +2,7 @@
 source("fbpESR-extradata.R")
 
 missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) + 
-  geom_text() + xlim(-5,5) + ylim(-5,5) + theme_void()
+  geom_text(size=10) + xlim(-2,2) + ylim(-2,2) + theme_void()
 
 esr.stats <- kpiESR::esr.pnl %>% na.omit() %>%
   filter(Type == "Université") %>%
