@@ -31,8 +31,6 @@ rentrée.last = 2018
 
 type = "Université"
 libellé = "Université de Tours"
-
-wikidataESR::wdesr_load_cache()
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
@@ -48,8 +46,5 @@ wikidataESR::wdesr_load_cache()
 ```
 
 
-```{r wdsave, warning = FALSE, message = FALSE, input = FALSE}
-wikidataESR::wdesr_save_cache()
-```
 
 

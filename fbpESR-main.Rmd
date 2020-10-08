@@ -154,7 +154,8 @@ knitr::opts_chunk$set(fig.width = 7, fig.height = 2.9, out.width = "70%", fig.al
 make_slide(plot_evolution, "kpi.K.proPres", "Le taux de ressources propres", small = TRUE,
 "Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité, qui sont généralement la source la plus importante. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services.",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
 
 ```
 
@@ -163,7 +164,8 @@ make_slide(plot_evolution, "kpi.K.proPres", "Le taux de ressources propres", sma
 make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", stat_percent = FALSE,
 "Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
 ```
 
 
@@ -171,6 +173,7 @@ make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", stat_per
 make_slide(plot_evolution, "kpi.K.titPens", "Le taux de titularité des enseignants", small = TRUE,
 "Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
-- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
 ```
 
