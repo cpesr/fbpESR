@@ -1,0 +1,179 @@
+---
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  beamer_presentation:
+    # toc: true
+    # toc_depth: 3
+    number_sections: true
+    slide_level: 2
+    theme: "Madrid"
+    includes:
+      in_header: header.tex
+      #before_body: before_body.tex
+    keep_tex:  true
+urlcolor: blue
+linkcolor: white
+fontsize: 8pt
+lang: "fr-FR"
+#geometry: margin=1.5cm
+#documentclass: book
+classoption: landscape
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.align="center")
+knitr::opts_chunk$set(pdf.options(encoding = "CP1250"))
+
+library(tidyverse)
+library(ggthemes)
+library(cowplot)
+library(kpiESR)
+library(wikidataESR)
+
+
+source("fbpESR.R")
+fbp <- fbp_get_data(type, libellé, rentrée.ref)
+
+plots <- kpiESR::kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
+
+wdid <- substr(fbp$etab$url.wikidata,33,50)[1]
+wikidataESR::wdesr_load_cache()
+```
+
+---
+title: "Fiche Bilan-Projet : `r fbp$Libellé`"
+---
+
+## Introduction
+
+
+
+Cette fiche bilan-projet vise à faciliter les élections dans les conseils centraux des universités en fournissant une information objective et uniformisée sur l'établissement, et en permettant aux candidats d'afficher une intention politique structurée et standardisée.
+
+Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. Cependant, son appropriation par les candidats et électeurs doit permettre de poser les bases d'un débat électoral sur le projet d'établissement.
+
+La méthodologie est essentiellement celle des [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
+
+```{r, out.height = "20%"}
+knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
+```
+
+
+
+### Sources principales des données
+
+- Portail des données ouvertes du MESRI : https://data.enseignementsup-recherche.gouv.fr
+- Wikidata ([guide d'édition](https://github.com/cpesr/wikidataESR/blob/master/Rmd/wikidataESR.md)) : `r paste0("https://www.wikidata.org/wiki/",wdid)` 
+- Formulaire de création d'une fiche : https://enquete.cpesr.fr/index.php/881846
+
+
+## Profil général
+
+Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon des indicateurs clés de performance (dont la description détaillée est disponible dans la suite). Chaque université est représentée par un point. La moyenne est inscrite dans une boite, et l'axe vertical représente l'écart à la moyenne.
+
+```{r profil.general, out.width = "60%", fig.width = 6, fig.height = 3}
+plots$k.norm
+```
+_Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles :
+
+ - __un périmètre non exhaustif__ : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
+ - __une granularité limitée à l'établissement__ : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.
+
+# Structure et organisation
+
+```{r struct.setup, include=FALSE}
+  knitr::opts_chunk$set(fig.width = 6, fig.height = 4, out.height = "60%", fig.align="center")
+```
+
+
+```{r plot_histoire, results='asis', echo = FALSE, warning = FALSE, message=FALSE}
+invisible(make_slide(plot_histoire, "histoire", "Historique",
+"L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.",
+"- Quelles fusions, séparations ou changement de statut sont envisagées ?"))
+```
+
+
+```{r plot_association, results='asis', fig.width = 6, fig.height = 4, echo = FALSE, message=FALSE}
+make_slide(plot_association, "association", "Associations",
+"Les associations montrent les adhésions à des organisations externes à l'établissement.",
+"- Quelles créations ou suppressions d'associations sont envisagées ?")
+```
+
+
+```{r plot_composition, results='asis', fig.width = 8, fig.height = 4.5, echo = FALSE, message=FALSE}
+make_slide(plot_composition, "composition", "Composition",
+"La composition montre la structuration interne de l'établissement.",
+"- Quelles modifications de la structure interne sont envisagées ?")
+```
+
+```{r wdsave, include = FALSE}
+wikidataESR::wdesr_save_cache()
+```
+
+
+# Indicateurs clés de performance
+
+```{r kpi.setup}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.width="100%", fig.align="center")
+```
+
+
+```{r plot_profil_etu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$etu.abs,plots$absnorm$etu.norm), "Le profil des étudiants",
+"Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
+"- Quelles modifications du profil LMD sont envisagées ?
+- Quelles évolutions pour les DU (et autres formations payantes) sont envisagées ?")
+```
+
+
+```{r plot_profil_ens, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$ens.abs,plots$absnorm$ens.norm), "Le profil des enseignants",
+"Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.",
+"- Quelles modifications des effectifs enseignants sont envisagées ?")
+```
+
+
+```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_profil, list(plots$absnorm$fin.abs,plots$absnorm$fin.norm), "Le profil budgétaire",
+"Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
+"- Quelles modifications du profil budgétaires sont envisagées ?")
+```
+
+
+
+
+# Evolutions
+
+```{r evol.setup}
+knitr::opts_chunk$set(fig.width = 7, fig.height = 2.9, out.width = "70%", fig.align="center")
+```
+
+
+```{r plot_proPres, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.proPres", "Le taux de ressources propres", small = TRUE,
+"Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité, qui sont généralement la source la plus importante. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
+
+```
+
+
+```{r plot_titPetu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", stat_percent = FALSE,
+"Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
+```
+
+
+```{r plot_titPens, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.titPens", "Le taux de titularité des enseignants", small = TRUE,
+"Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
+```
+

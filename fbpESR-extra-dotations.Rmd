@@ -1,0 +1,16 @@
+
+```{r dotation.setup, include=FALSE}
+  knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.width = NULL, out.height = "45%", fig.align="center")
+```
+
+
+# Les dotations internes 
+
+
+```{r plot_dotation, results='asis'}
+make_slide(plot_dotation, "dotation", "La répartition N1-N2 des moyens", 
+"La répartition N1-N2 est une mesure de la politique budgétaire de l'établissement. Elle indique à la fois comment les trois missions principales (enseignement, recherche et vie étudiante) sont soutenues, indépendament des charges incompressibles. Il s'agit des dotations aux composantes d'enseignement et de recherche (UFR, laboratoires...), soit en crédits de base, soit sous forme d'appels à projets internes (AAPI).",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? ")
+```
+

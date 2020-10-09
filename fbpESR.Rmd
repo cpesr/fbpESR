@@ -1,0 +1,309 @@
+---
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  beamer_presentation:
+    # toc: true
+    # toc_depth: 3
+    number_sections: true
+    slide_level: 2
+    theme: "Madrid"
+    includes:
+      in_header: header.tex
+      #before_body: before_body.tex
+    keep_tex:  true
+urlcolor: blue
+linkcolor: white
+fontsize: 8pt
+lang: "fr-FR"
+#geometry: margin=1.5cm
+#documentclass: book
+classoption: landscape
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.align="center")
+knitr::opts_chunk$set(pdf.options(encoding = "CP1250"))
+
+library(tidyverse)
+library(kpiESR)
+library(ggthemes)
+library(cowplot)
+
+# uai <- esr.uais$Université$`Université de Strasbourg`
+# uai <- esr.uais$Université$`Université Paris-Est Marne-la-Vallée`
+# 
+# uai <- esr.uais$Université$`Université de Caen Normandie`
+# uai <- esr.uais$Université$`Université Toulouse - Jean Jaurès`
+# 
+# uai <- esr.uais$Université$`Université de Limoges`
+# uai <- esr.uais$Université$`Université de Pau et des Pays de l'Adour`
+# uai <- esr.uais$Université$`Université Sorbonne Paris Nord`
+# uai <- esr.uais$Université$`Université de Reims Champagne-Ardenne`
+# uai <- esr.uais$Université$`Université de Nantes`
+ 
+library(wikidataESR)
+source("fbpESR.R")
+
+rentrée.ref = 2012
+rentrée.last = 2018
+ 
+fbp <- fbp_get_data("Université", "Université de Strasbourg", rentrée.ref)
+
+plots <- kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
+
+projet_q1 <- "D'après vous, cette politique doit être :
+
+- [ ] Prioritairement accélérée
+- [ ] Accélérée
+- [ ] Poursuivie
+- [ ] Inversée
+- [ ] Prioritairement inversée
+"
+
+projet_q2 <- "D'après vous, cette politique est :
+
+- [ ] souhaitable et prioritaire.
+- [ ] souhaitable.
+- [ ] non souhaitable mais inévitable.
+- [ ] nos souhaitable et doit être évitée.
+"
+
+projet_q <- projet_q2
+```
+
+---
+title: "Fiche Bilan-Projet : `r fbp$Libellé`"
+---
+
+## Introduction
+
+
+
+Cette fiche bilan-projet vise à faciliter les élections dans les conseils centraux des universités en fournissant une information objective et uniformisée sur l'établissement, et en permettant aux candidats d'afficher une intention politique structurée et standardisée.
+
+Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. Cependant, son appropriation par les candidats et électeurs doit permettre de poser les bases d'un débat électoral sur le projet d'établissement.
+
+Elle se base pour l'essentiel sur la méthodologie utilisée pour élaborer les [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
+
+```{r, out.height = "20%"}
+knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
+```
+
+### Source principale des données
+
+Portail des données ouvertes du Ministère de l'enseignement supérieur, de la recherche et de l'innovation : https://data.enseignementsup-recherche.gouv.fr
+
+
+
+## Profil général
+
+Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon des indicateurs clés de performance (dont la description détaillée est disponible dans la suite). Chaque université est représentée par un point. La moyenne est inscrite dans une boite, et l'axe vertical représente l'écart à la moyenne.
+
+```{r profil.general, out.width = "60%", fig.width = 6, fig.height = 3}
+plots$k.norm
+```
+_Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles :
+
+ - __un périmètre non exhaustif__ : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
+ - __une granularité limitée à l'établissement__ : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.
+
+
+# Structure et organisation
+
+```{r struct.setup, include=FALSE}
+  wdesr_load_cache()
+  wdid <- substr(fbp$etab$url.wikidata,33,50)[1]
+  knitr::opts_chunk$set(fig.width = 6, fig.height = 4, out.height = "60%", fig.align="center")
+```
+
+## Historique
+
+_Définition :_ L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.
+
+
+```{r histoire, fig.width=9, fig.height=5}
+try(
+  wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
+                      node_label = "alias_date",
+                      legend_position="none",
+                      node_sizes = 40, arrow_gap = 0.0, margin_y = 0.15) 
+)
+```
+
+### Question politique afférente 
+Quelles fusions, séparations ou changement de statut sont envisagées ?
+
+
+## Associations
+
+_Définition :_ Les associations montrent les adhésions à des organisations externes à l'établissement.
+
+```{r associations}
+try(
+  wdesr_load_and_plot(wdid, c('composante_de', 'associé_de', 'membre_de'), depth=2, 
+                      legend_position="none", margin_y = 0.1) 
+)
+```
+
+### Question politique afférente 
+Quelles créations ou suppressions d'associations sont envisagées ?
+
+
+## Composition
+
+_Définition :_ La composition montre la structuration interne de l'établissement.
+
+```{r composition, fig.width=8}
+try(
+  wdesr_load_and_plot(wdid, c('composante','associé'), depth=2,
+                      legend_position="left")
+)
+  wdesr_save_cache()
+```
+
+### Question politique afférente 
+Quelles modifications de la structure interne sont envisagées ?
+
+
+# Indicateurs clés de performance
+
+```{r kpi.setup}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.width="100%", fig.align="center")
+```
+
+## Profil des étudiants
+
+_Définition :_ Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).
+
+
+```{r profil.etu}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$etu.abs,plots$absnorm$etu.norm))
+```
+
+
+### Questions politiques afférentes 
+- Quelles modifications du profil LMD sont envisagées ?
+- Quelles évolutions pour les DU (et autres formations payantes) sont envisagées ?
+
+
+## Profil des enseignants
+
+_Définition :_ Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.
+
+```{r profil.ens}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$ens.abs,plots$absnorm$ens.norm))
+```
+
+
+### Question politique afférente 
+Quelles modifications des effectifs enseignants sont envisagées ?
+
+## Profil budgétaire
+
+_Définition :_ Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.
+
+
+```{r profil.fin}
+plot_grid(ncol=2,  plotlist=list(plots$absnorm$fin.abs,plots$absnorm$fin.norm))
+```
+
+
+### Question politique afférente 
+Quelles modifications du profil budgétaires sont envisagées ?
+
+
+
+# Evolutions
+
+```{r evol.setup}
+knitr::opts_chunk$set(fig.width = 7, fig.height = 3, out.width = "70%", fig.align="center")
+```
+
+## Taux de ressources propres
+
+```{=latex}
+\begin{footnotesize}
+```
+
+_Définition :_ Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services. La source principale de ressources propres reste les frais d'inscription des étudiants.
+
+```{=latex}
+\end{footnotesize}
+```
+
+Le taux de ressources propres médian des universités en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.proPres", Rentrée == rentrée.last)$med)`.
+
+
+```{r kpi.K.proPres}
+thekpiname="Taux de ressources propres"
+thekpi="kpi.K.proPres"
+evol.graph(fbp, thekpi)
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?
+
+
+
+## Taux de d'encadrement
+
+_Définition :_ Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).
+
+Le taux d'encadrement médian des universités en `r rentrée.last` est : `r round(filter(esr.stats, kpi == "kpi.K.titPetu", Rentrée == rentrée.last)$med,2)`.
+
+
+```{r kpi.K.titPetu}
+thekpi="kpi.K.titPetu"
+thekpiname="Taux d'encadrement"
+evol.graph(fbp, thekpi)
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?
+
+
+
+
+
+## Taux de titularité des enseignants
+
+```{=latex}
+\begin{footnotesize}
+```
+
+_Définition :_ Le taux de titularité des enseignants est une mesure de la politique RH de l'établissement. Il indique la proportion d'enseignants titulaires parmi tous les enseignants : doctorants avec mission d'enseignement, ATER et contractuels type LRU, exceptés les vacataires, pour lesquels les données nationales manquent malgré qu'ils puissent être plus nombreux que les enseignants titulaires. Une hausse peut aussi bien refléter une politique de titularisation, qu'une éviction des non titulaires.
+
+```{=latex}
+\end{footnotesize}
+```
+
+Le taux de titularité médian des universités  en `r rentrée.last` est : `r scales::percent(filter(esr.stats, kpi == "kpi.K.titPens", Rentrée == rentrée.last)$med)`.
+
+
+```{r kpi.K.titPens}
+thekpi="kpi.K.titPens"
+thekpiname="Taux de titularité des enseignants"
+evol.graph(fbp, thekpi) 
+```
+
+_Observation :_ `r txt_obs(fbp, thekpiname, thekpi, rentrée.ref, rentrée.last)`
+
+### Questions politiques afférentes 
+
+- L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ? 
+
+
+
+
+
+
