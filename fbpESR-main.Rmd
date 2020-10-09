@@ -1,24 +1,3 @@
----
-date: "`r format(Sys.time(), '%d/%m/%Y')`"
-output:
-  beamer_presentation:
-    # toc: true
-    # toc_depth: 3
-    number_sections: true
-    slide_level: 2
-    theme: "Madrid"
-    includes:
-      in_header: header.tex
-      #before_body: before_body.tex
-    keep_tex:  true
-urlcolor: blue
-linkcolor: white
-fontsize: 8pt
-lang: "fr-FR"
-#geometry: margin=1.5cm
-#documentclass: book
-classoption: landscape
----
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
@@ -43,6 +22,15 @@ wikidataESR::wdesr_load_cache()
 
 ---
 title: "Fiche Bilan-Projet : `r fbp$Libellé`"
+author: |
+  | CPESR
+  | [www.cpesr.fr](https://cpesr.fr)
+  | contact@cpesr.fr
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+urlcolor: blue
+linkcolor: white
+fontsize: 8pt
+lang: "fr-FR"
 ---
 
 ## Introduction
