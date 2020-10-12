@@ -56,18 +56,6 @@ knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
 - Formulaire de création d'une fiche : https://enquete.cpesr.fr/index.php/881846
 
 
-## Profil général
-
-Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon des indicateurs clés de performance (dont la description détaillée est disponible dans la suite). Chaque université est représentée par un point. La moyenne est inscrite dans une boite, et l'axe vertical représente l'écart à la moyenne.
-
-```{r profil.general, out.width = "60%", fig.width = 6, fig.height = 3}
-plots$k.norm
-```
-_Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles :
-
- - __un périmètre non exhaustif__ : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
- - __une granularité limitée à l'établissement__ : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.
-
 # Structure et organisation
 
 ```{r struct.setup, include=FALSE}
@@ -89,7 +77,7 @@ make_slide(plot_association, "association", "Associations",
 ```
 
 
-```{r plot_composition, results='asis', fig.width = 8, fig.height = 4.5, echo = FALSE, message=FALSE}
+```{r plot_composition, results='asis', fig.width = 9, fig.height = 4.5, echo = FALSE, message=FALSE}
 make_slide(plot_composition, "composition", "Composition",
 "La composition montre la structuration interne de l'établissement.",
 "- Quelles modifications de la structure interne sont envisagées ?")
@@ -100,7 +88,7 @@ wikidataESR::wdesr_save_cache()
 ```
 
 
-# Indicateurs clés de performance
+# Trois profils : etudiant, enseignant, et budgétaire.
 
 ```{r kpi.setup}
 knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.width="100%", fig.align="center")
@@ -108,30 +96,29 @@ knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.widt
 
 
 ```{r plot_profil_etu, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, list(plots$absnorm$etu.abs,plots$absnorm$etu.norm), "Le profil des étudiants",
-"Le profil des étudiants est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
+make_slide(plot_profil, list(plots$absnorm$etu.abs,plots$absnorm$etu.norm), "Le profil étudiant",
+"Le profil étudiant est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
 "- Quelles modifications du profil LMD sont envisagées ?
 - Quelles évolutions pour les DU (et autres formations payantes) sont envisagées ?")
 ```
 
 
 ```{r plot_profil_ens, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, list(plots$absnorm$ens.abs,plots$absnorm$ens.norm), "Le profil des enseignants",
-"Le profil des enseignants est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.",
-"- Quelles modifications des effectifs enseignants sont envisagées ?")
+make_slide(plot_profil, list(plots$absnorm$ens.abs,plots$absnorm$ens.norm), "Le profil enseignant",
+"Le profil enseignant est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.",
+"- Quelles modifications des effectifs enseignants sont envisagées ?
+- Est-ce que le recours aux contrats LRU, Chaires professeur junior et Contrats de mission est envisagée ?")
 ```
 
 
 ```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
 make_slide(plot_profil, list(plots$absnorm$fin.abs,plots$absnorm$fin.norm), "Le profil budgétaire",
 "Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
-"- Quelles modifications du profil budgétaires sont envisagées ?")
+"- Quelles modifications du profil budgétaires sont envisagées ?
+- Est-ce que le développement des ressources propres est une priorité ? De quelle manière ?")
 ```
 
-
-
-
-# Evolutions
+# Indicateurs clés de performance
 
 ```{r evol.setup}
 knitr::opts_chunk$set(fig.width = 7, fig.height = 2.9, out.width = "70%", fig.align="center")
@@ -149,7 +136,7 @@ observation = TRUE)
 
 
 ```{r plot_titPetu, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", stat_percent = FALSE,
+make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", unit = "enseignants titulaires pour 100 étudiants",
 "Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
@@ -165,3 +152,24 @@ make_slide(plot_evolution, "kpi.K.titPens", "Le taux de titularité des enseigna
 observation = TRUE)
 ```
 
+
+```{r plot_resPetu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.resPetu", "Le taux de ressources par étudiant", unit = "€",
+"Ce rapport entre les ressources de l’établissement et le nombre d’étudiants inscrits en premier et deuxième cycle (L et M) permet de mesurer les res sources dont dispose l’établissement par rapport à la taille de sa population étudiante. Attention : ce taux ne correspond pas à la dépense de l’établissement pour chacun de ses étudiants, et il ne dépend que faiblement de la politique locale.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE)
+```
+
+
+## Comparaison des indicateurs clés de performance à la moyenne nationale
+
+Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon les indicateurs clés de performance. Chaque université est représentée par un point. La moyenne est inscrite dans une boite, et l'axe vertical représente l'écart à la moyenne.
+
+```{r profil.general, out.width = "60%", fig.width = 6, fig.height = 3}
+plots$k.norm
+```
+_Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles :
+
+ - __un périmètre non exhaustif__ : par exemple les effectifs des personnels BIATSS et vacataires ne sont disponibles ;
+ - __une granularité limitée à l'établissement__ : les hétérogénités internes ne sont pas perceptibles, bien qu'elles puissent être importantes, notamment dans les grandes universités pluridisciplinaires.

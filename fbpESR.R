@@ -96,9 +96,12 @@ txt_obs <- function(fbp, thekpiname, thekpi) {
     ".")
 }
 
-txt_median <- function(thekpi, stat_percent = TRUE) {
+txt_median <- function(thekpi, unit = "%") {
   s <- filter(esr.stats, kpi == thekpi) %>% tail(1)
-  val <- ifelse(stat_percent, scales::percent(s$med, 0.1), round(s$med,2))
+  val <- case_when(
+    unit == "%" ~ scales::percent(s$med, 0.1),
+    unit == "€" ~ paste(round(s$med,0),unit),
+    TRUE ~ paste(round(s$med,2),unit))
   ifelse(nrow(s) == 0, "",
     paste0("Taux médian des universités en ", s$Rentrée, " : ", val,".")
     )
@@ -129,7 +132,7 @@ error_list <- list()
 
 make_slide <- function(plotfun, thekpi, thekpiname, definition, questions, 
                        small=FALSE, 
-                       stat_percent = TRUE,
+                       unit = "%",
                        observation = FALSE) {
   
   p <- NULL
@@ -143,7 +146,7 @@ make_slide <- function(plotfun, thekpi, thekpiname, definition, questions,
 
   cat("_Définition :_ ", definition,"\n\n")
 
-  cat(txt_median(thekpi, stat_percent),"\n\n")
+  cat(txt_median(thekpi, unit),"\n\n")
 
   print(p)
 
