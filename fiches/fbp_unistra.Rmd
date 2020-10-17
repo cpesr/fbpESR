@@ -13,7 +13,6 @@ output:
 ---
 
 ```{r config, include=FALSE}
-
 rentrée.ref = 2012
 rentrée.last = 2018
 

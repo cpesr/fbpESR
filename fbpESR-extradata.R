@@ -63,13 +63,13 @@ get_extradata_array <- function(extradata, qid, twodim = FALSE) {
       cols = everything(),
       names_pattern = pat,
       names_to = c("key1","key2"),
-      values_to = "value"
+      values_to = "valeur"
     ) %>% 
-    filter(!is.na(value), !value == "") %>%
+    filter(!is.na(valeur), !valeur == "") %>%
     { if(!twodim) mutate(., key2 = "lien") else . } %>% 
     pivot_wider(
       names_from = key2,
-      values_from = value
+      values_from = valeur
     )
 }
 
@@ -88,9 +88,9 @@ merge_and_add_kpis <- function(fbp) {
     fbp$extradata.kpi) 
   
   if(fbp$extradata$hecunite == "Heures") {
-    hec.labels <- function(value) paste(round(value,1.0),"h")
+    hec.labels <- function(valeur) paste(round(valeur,1.0),"h")
   } else {
-    hec.labels <- function(value) paste(format(round(value/1000,2), big.mark=" "),"k€")
+    hec.labels <- function(valeur) paste(format(round(valeur/1000,2), big.mark=" "),"k€")
   }
   
   fbp$etab.pnl <- fbp$etab %>%
@@ -106,15 +106,15 @@ merge_and_add_kpis <- function(fbp) {
       kpi.D.aaprech = dotations.aapre,
       kpi.D.vieetu = dotations.vieet
     ) %>%
-    pivot_longer(-c(Rentrée,UAI), names_to="kpi") %>%
+    pivot_longer(-c(Rentrée,UAI), names_to="kpi", values_to="valeur") %>%
     mutate(
-      value_label = case_when(
-        kpi == "kpi.H.hcvPhee" ~ scales::percent(value,0.1),
-        startsWith(kpi, "kpi.D") ~ euro_k(value),
-        TRUE ~ hec.labels(value),
+      valeur_label = case_when(
+        kpi == "kpi.H.hcvPhee" ~ scales::percent(valeur,0.1),
+        startsWith(kpi, "kpi.D") ~ euro_k(valeur),
+        TRUE ~ hec.labels(valeur),
       )
     ) %>%
-    filter(!is.na(value)) %>%
+    filter(!is.na(valeur)) %>%
     bind_rows(fbp$etab.pnl) %>%
     mutate(kpi = factor(kpi))
   
@@ -141,14 +141,15 @@ fbp_get_data <- function(type, libellé, rentrée.min = 2000) {
   }
   
   fbp$etab.pnl <- fbp$etab.pnl%>% 
-    filter(!is.na(value)) %>%
+    filter(!is.na(valeur)) %>%
     group_by(kpi) %>%
-    mutate( Evolution = value / first(value) - 1 )
+    filter(valeur != 0) %>%
+    mutate( Evolution = valeur / first(valeur) - 1 )
   
   fbp$limits.evolution <- range(
     filter(fbp$etab.pnl,
            kpi %in% c("kpi.K.proPres","kpi.K.titPetu",
-                      "kpi.K.titPens","kpi.K.titPetu",
+                      "kpi.K.titPens",
                       "kpi.H.hcvPhee","kpi.H.hctPtit",
                       "kpi.H.heePetu"))$Evolution,
       na.rm = TRUE, finite=1)*1.1
