@@ -13,22 +13,23 @@ output:
 ---
 
 ```{r config, include=FALSE}
+
 rentrée.ref = 2012
 rentrée.last = 2018
 
 type = "Université"
-libellé = "Université de Strasbourg"
+libellé = "Université d'Orléans"
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
 ```
 
-```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE}
-```
+<!-- ```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
 
-```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE}
-```
+<!-- ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
 
-```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE}
-```
+<!-- ```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
 
