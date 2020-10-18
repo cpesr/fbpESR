@@ -1,8 +1,8 @@
 library(tidyverse)
 
-read.extradata <- function(libellé) {
+read.extradata <- function(libellé, dir=".") {
 
-  df <- read.csv("extradata/extradata.csv") %>%
+  df <- read.csv(paste0(dir,"/extradata/extradata.csv")) %>%
     mutate(
       Libellé = paste0(na.omit(Universite,Universite.other.,
                             greta, greta.other.,
@@ -124,9 +124,9 @@ merge_and_add_kpis <- function(fbp) {
 
 
 
-fbp_get_data <- function(type, libellé, rentrée.min = 2000) {
+fbp_get_data <- function(type, libellé, rentrée.min = 2000, dir=".") {
 
-  fbp <- read.extradata(libellé)
+  fbp <- read.extradata(libellé, dir)
   
   fbp$Libellé <- libellé
   fbp$UAI <- kpiESR::esr.uais[[type]][[libellé]]
