@@ -1,5 +1,5 @@
 
-source("fbpESR-extradata.R")
+source("fbpESR-extradata.R", chdir=TRUE)
 
 missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) + 
   geom_text(size=10) + xlim(-2,2) + ylim(-2,2) + theme_void()

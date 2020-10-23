@@ -1,0 +1,124 @@
+---
+output:
+  beamer_presentation:
+    keep_tex:  true
+---
+
+```{r config, include=FALSE}
+library(tidyverse)
+library(ggthemes)
+library(cowplot)
+library(kpiESR)
+library(wikidataESR)
+library(ggrepel)
+
+knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.align="center", out.height="80%")
+knitr::opts_chunk$set(pdf.options(encoding = "CP1250"))
+
+
+rentrée.ref = 2012
+rentrée.last = 2018
+
+type = "Université"
+libellé = "Université de Strasbourg"
+
+source("../fbpESR.R", chdir=TRUE)
+fbp <- fbp_get_data(type, libellé, rentrée.ref, dir="..")
+
+
+plot_vs_evolution <- function(fbp, thekpi1, thekpi2) {
+  df <- fbp$etab.pnl %>% filter(kpi %in% c(thekpi1,thekpi2))
+  
+  ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=kpi)) + 
+    geom_hline(yintercept = 0, color="grey") +
+    geom_line(size=1) + 
+    geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) + 
+    geom_text(color="black", fontface="bold") +
+    facet_wrap(kpi~., scales="free_y") +
+    scale_y_continuous(labels = percent_format) +
+    scale_fill_distiller(palette = "RdBu") +
+    theme_hc() + guides(fill = FALSE)
+}
+
+```
+
+# Heures par étudiant vs Heures complémentaires des titulaires
+```{r heeVShet, fig.width=7, fig.height=5}
+  fbp$etab[fbp$etab$Rentrée == 2010,]$kpi.ENS.S.titulaires <- 1906
+  fbp$etab[fbp$etab$Rentrée == 2011,]$kpi.ENS.S.titulaires <- 1901
+  adddata <- fbp$etab %>% 
+    filter(as.character(Rentrée) > 2009) %>%
+    transmute(
+      Rentrée = Rentrée,
+      kpi = "HctPtit",
+      valeur = heures.HeCT / kpi.ENS.S.titulaires,
+      valeur_label = paste(round(valeur,1),"h"),
+      Evolution = valeur / first(valeur) - 1
+    ) 
+  
+  df <- fbp$etab.pnl %>% 
+    filter(kpi %in% c("kpi.H.heePetu")) %>%
+    rbind(adddata) %>%
+    filter(as.character(Rentrée) < 2019)
+  
+  ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=kpi, color=kpi)) + 
+    geom_hline(yintercept = 0, color="grey") +
+    geom_line(size=1) + 
+    geom_text_repel(data = filter(df, Rentrée %in% c(2010,2012,2018)), 
+          color="black", fontface="bold", nudge_x = 0.05, direction = "y") +
+    scale_y_continuous(labels = percent_format) +
+    scale_color_discrete(name="Heures", labels = c("complémentaires par titulaire", "par étudiant")) +
+
+    scale_fill_distiller(palette = "RdBu") +
+    theme_hc() + guides(fill = FALSE)
+```
+
+
+# Dotations vs. Investissements
+```{r dotvsinv, fig.width=7, fig.height=5}
+ df <- fbp$etab %>% 
+  transmute(
+    Rentrée = Rentrée,
+    Dotations = dotations.doten + dotations.dotre,
+    Investissements = kpi.FIN.S.investissements ) %>%
+  filter(as.character(Rentrée) > 2010, as.character(Rentrée) < 2019) %>%
+  pivot_longer(-Rentrée, names_to = "kpi", values_to = "Dépense")
+  
+df
+  
+  ggplot(df, aes(x=Rentrée, y=Dépense, label=euro_M(Dépense), group=kpi, color=kpi)) +
+    geom_line(size=1) +
+    #geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) +
+    geom_text_repel(data = filter(df, Rentrée %in% c(2010,2011,2018)),
+              color="black", fontface="bold", hjust=0, nudge_x = 0.05, direction = "y") +
+    scale_y_continuous(labels = euro_M, limits=c(0,90e6)) +
+    scale_color_discrete(name="", labels = c("Dotations des composantes et laboratoires", "Investissements du central")) +
+    #scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
+    theme_hc() + guides(fill = FALSE)
+```
+
+
+
+
+# Masse salariale vs 
+```{r dotvsinv, fig.width=7, fig.height=5}
+ df <- fbp$etab %>% 
+  transmute(
+    Rentrée = Rentrée,
+    Dotations = dotations.doten + dotations.dotre,
+    Investissements = kpi.FIN.S.investissements ) %>%
+  filter(as.character(Rentrée) > 2010, as.character(Rentrée) < 2019) %>%
+  pivot_longer(-Rentrée, names_to = "kpi", values_to = "Dépense")
+  
+  
+  ggplot(df, aes(x=Rentrée, y=Dépense, label=euro_M(Dépense), group=kpi, color=kpi)) + 
+    geom_line(size=1) + 
+    #geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) + 
+    geom_text_repel(data = filter(df, Rentrée %in% c(2010,2011,2018)), 
+              color="black", fontface="bold", hjust=0, nudge_x = 0.05, direction = "y") +
+    scale_y_continuous(labels = euro_M, limits=c(0,90e6)) +
+    scale_color_discrete(name="", labels = c("Dotations des composantes et laboratoires", "Investissements du central")) +
+    #scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
+    theme_hc() + guides(fill = FALSE)
+```
