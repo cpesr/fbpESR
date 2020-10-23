@@ -85,6 +85,32 @@ plot_vs_evolution <- function(fbp, thekpi1, thekpi2) {
   filter(as.character(Rentrée) > 2010, as.character(Rentrée) < 2019) %>%
   pivot_longer(-Rentrée, names_to = "kpi", values_to = "Dépense")
   
+df
+  
+  ggplot(df, aes(x=Rentrée, y=Dépense, label=euro_M(Dépense), group=kpi, color=kpi)) +
+    geom_line(size=1) +
+    #geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) +
+    geom_text_repel(data = filter(df, Rentrée %in% c(2010,2011,2018)),
+              color="black", fontface="bold", hjust=0, nudge_x = 0.05, direction = "y") +
+    scale_y_continuous(labels = euro_M, limits=c(0,90e6)) +
+    scale_color_discrete(name="", labels = c("Dotations des composantes et laboratoires", "Investissements du central")) +
+    #scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
+    theme_hc() + guides(fill = FALSE)
+```
+
+
+
+
+# Masse salariale vs 
+```{r dotvsinv, fig.width=7, fig.height=5}
+ df <- fbp$etab %>% 
+  transmute(
+    Rentrée = Rentrée,
+    Dotations = dotations.doten + dotations.dotre,
+    Investissements = kpi.FIN.S.investissements ) %>%
+  filter(as.character(Rentrée) > 2010, as.character(Rentrée) < 2019) %>%
+  pivot_longer(-Rentrée, names_to = "kpi", values_to = "Dépense")
+  
   
   ggplot(df, aes(x=Rentrée, y=Dépense, label=euro_M(Dépense), group=kpi, color=kpi)) + 
     geom_line(size=1) + 
