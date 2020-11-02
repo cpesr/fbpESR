@@ -148,9 +148,13 @@ fbp_get_data <- function(type, libellé, rentrée.min = 2000, dir=".") {
   
   fbp$limits.evolution <- range(
     filter(fbp$etab.pnl,
-           kpi %in% c("kpi.K.proPres","kpi.K.titPetu",
+           kpi %in% c("kpi.K.dotPres",
+                      "kpi.K.titPetu",
                       "kpi.K.titPens",
-                      "kpi.H.hcvPhee","kpi.H.hctPtit",
+                      #"kpi.K.recPect",
+                      #"kpi.K.forPetu",
+                      "kpi.H.hcvPhee",
+                      "kpi.H.hctPtit",
                       "kpi.H.heePetu"))$Evolution,
       na.rm = TRUE, finite=1)*1.1
   

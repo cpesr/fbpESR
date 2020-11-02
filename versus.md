@@ -12,8 +12,9 @@ df.etabs <- df.all %>% filter(UAI %in% uais)
 ggplot(df.etabs,aes(x=Rentrée,y=kpi.K.resPetu)) +
   geom_boxplot(data = df.all, fill="grey", alpha=0.5) +
   geom_line(aes(group=Libellé, color=Libellé), size = 2) +
-  scale_y_continuous(limits=c(0,12000), name = "Ressources par étudiant", labels = euro_k) +
-  theme_hc()
+  scale_y_continuous(limits=c(2000,12000), name = "Ressources par étudiant", labels = euro_k) +
+  theme_hc() + 
+  theme(axis.title.x = element_blank())
 ```
 
     ## Warning: Removed 73 rows containing non-finite values (stat_boxplot).

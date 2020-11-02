@@ -22,6 +22,8 @@ plot_evolution <- function(fbp, thekpi) {
   df <- fbp$etab.pnl %>% filter(kpi == thekpi)
   if(nrow(df) == 0) stop("Données manquantes")
   
+  fbp$limits.evolution[1] <- min(c(df$Evolution, fbp$limits.evolution[1]))
+  fbp$limits.evolution[2] <- max(c(df$Evolution, fbp$limits.evolution[2]))
   mle = max(abs(fbp$limits.evolution))
   
   ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=1)) + 
@@ -31,6 +33,7 @@ plot_evolution <- function(fbp, thekpi) {
     geom_point(aes(fill=Evolution), shape = 21, colour = "black", size = 17, stroke = 1) + 
     geom_text(color="black", fontface="bold") +
     scale_y_continuous(labels = percent_format, limits=fbp$limits.evolution) +
+    #scale_y_continuous(labels = percent_format) +
     scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
     theme_hc() + guides(fill = FALSE)
 }
@@ -42,7 +45,7 @@ plot_evolutions <- function(fbp, lfc) {
   
   mle = max(abs(df$Evolution))
   
-  ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=kpi, color=kpi)) + 
+  ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=kpi, color=kpi, linetype=kpi)) + 
     #geom_vline(xintercept=c("2012","2016")) +
     geom_hline(yintercept = 0, color="grey") +
     geom_line(size=1) + 
@@ -52,6 +55,8 @@ plot_evolutions <- function(fbp, lfc) {
     scale_y_continuous(labels = percent_format) +
     scale_color_manual(values = lfc$colors, labels = lfc$labels, limits = lfc$factors,
                          name = "Indicateurs") +
+    scale_linetype_discrete(labels = lfc$labels, limits = lfc$factors,
+                       name = "Indicateurs") +
     scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
     theme_hc() + guides(fill = FALSE)
 }
