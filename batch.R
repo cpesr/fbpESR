@@ -13,7 +13,8 @@ rmdfiles <- c(
   "upem",
   "uppa",
   "urca",
-  "ut2j"
+  "ut2j",
+  "paris1"
 )
   
 for(rmdfile in rmdfiles) {

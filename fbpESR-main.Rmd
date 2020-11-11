@@ -133,7 +133,7 @@ make_slide(plot_evolutions, lfc, "Le profil enseignant : évolution", median = F
 
 
 ```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, "FIN_N",
+make_slide(plot_profil, "FIN",
            "Le profil budgétaire",
 "Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
 "- Quelles modifications du profil budgétaires sont envisagées ?

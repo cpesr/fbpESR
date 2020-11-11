@@ -138,7 +138,8 @@ plot_histoire <- function(...) {
   wikidataESR::wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
                       node_label = "alias_date",
                       legend_position="none",
-                      node_sizes = 40, arrow_gap = 0.0, margin_y = 0.15) 
+                      node_sizes = 15, label_sizes = 2,
+                      arrow_gap = 0.0, margin_y = 0.15) 
 }
 
 plot_composition <- function(...) {
@@ -163,7 +164,7 @@ plot_profil <- function(fbp, thekpi,...) {
                                    kvt_scale_text_size = 2,
                                    kvt_scale_point_size = 1,
                                    #kvt_style="square",
-                                   kvt_plot.margin = ggplot2::unit(c(-1.5,-2,-1.5,-2), "cm")
+                                   kvt_plot.margin = ggplot2::unit(c(-0.3,-1,-0.3,-1), "cm")
                                    )
             )
             )
