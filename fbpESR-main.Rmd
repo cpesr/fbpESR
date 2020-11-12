@@ -133,7 +133,7 @@ make_slide(plot_evolutions, lfc, "Le profil enseignant : évolution", median = F
 
 
 ```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, "FIN_N",
+make_slide(plot_profil, "FIN",
            "Le profil budgétaire",
 "Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
 "- Quelles modifications du profil budgétaires sont envisagées ?
@@ -165,9 +165,9 @@ observation = TRUE)
 ```
 
 
-```{r plot_proPres, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_evolution, "kpi.K.proPres", "Le taux de ressources propres", small = TRUE,
-"Le taux de ressources propres mesure les moyens que l'établissement obtient en plus des subventions de service public versées l'Etat. Ces moyens regroupent notamment les financements sur projet et les frais de scolarité, qui sont généralement la source la plus importante. Il reflêtent donc à la fois le dynamisme de l'établissement et sa volonté de commercialiser ses services.",
+```{r plot_dotPres, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.dotPres", "Le taux de SCSP", small = TRUE,
+"Le taux de subvention pour charge de service public (SCSP) mesure les moyens octroyés par l'Etat pour accomplir les missions de service public, parmis toutes les ressources dont dispose l'établissement.",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
 observation = TRUE)
@@ -191,16 +191,32 @@ make_slide(plot_evolution, "kpi.K.titPens", "Le taux de titularité des enseigna
 observation = TRUE)
 ```
 
+```{r plot_forPetu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.forPetu", "Recettes de la formation par étudiant", small = TRUE,
+"Les recettes de la formation par étudiant est une mesure de la stratégie budgétaire de l'établissement. Elles incluent les droits d'inscription, les diplômes propres, la formation continue, la VAE, et la taxe d'apprentissage, divisées par le nombre d'étudiants, doctorants inclus.",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE, unit = "€")
+```
+
+```{r plot_recPect, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.recPect", "Recettes de la recherche par enseignant-chercheur titulaire", small = TRUE,
+"Les recettes de la recherche par enseignant-chercheur titulaire est une mesure de la stratégie budgétaire de l'établissement. Elles incluent la valorisation, les ANR en et hors investissement d'avenir, et les contrats et prestations de recherche, divisées par le nombre d'EC titulaires",
+"- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
+- Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
+observation = TRUE, unit = "€")
+```
 
 ## Comparaison nationale des indicateurs clés de performance 
 
 Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon les indicateurs clés de performance. En fond sont indiquées les valeurs nationales minimales, medianes et maximales. La position des grands points indique le rang de l'établissement pour chacun des indicateurs : plus elle est vers l'extérieur, plus l'établissement est haut dans le classement national. 
 
-```{r profil.general, out.width = NULL, out.height = "55%", fig.width = 5, fig.height = 5}
+```{r profil.general, out.width = NULL, out.height = "55%", fig.width = 6, fig.height = 5}
 kpiesr_plot_kiviat(rentrée.last, fbp$UAI, kpiesr_lfc[["K"]], norm.valeurs=FALSE, omit.first = FALSE, style=kpiesr_style(
-  kvt_plot.margin = ggplot2::unit(c(-3,-1.65,-3,-1.65), "cm"),
-  kvt_max_y = 1.2,
-  kvt_guide_bg_size = 50))
+  kvt_plot.margin = ggplot2::unit(c(-2.5,0,-2.5,0), "cm"),
+  kvt_max_y = 1.25,
+  kvt_guide_bg_size = 50,
+  kvt_style="circle"))
 ```
 
 ### Questions politiques afférentes
