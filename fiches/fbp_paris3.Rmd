@@ -1,0 +1,48 @@
+---
+author: |
+  | CPESR
+  | [www.cpesr.fr](https://cpesr.fr)
+  | contact@cpesr.fr
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  beamer_presentation:
+    # toc: true
+    # toc_depth: 3
+    number_sections: true
+    slide_level: 2
+    theme: "Madrid"
+    includes:
+      in_header: files/header.tex
+      #before_body: before_body.tex
+    keep_tex:  true
+urlcolor: blue
+linkcolor: white
+fontsize: 8pt
+lang: "fr-FR"
+#geometry: margin=1.5cm
+#documentclass: book
+classoption: landscape
+---
+  ```{r config, include=FALSE}
+
+rentrée.ref = 2012
+rentrée.last = 2018
+
+type = "Université"
+libellé = "Université Sorbonne Nouvelle - Paris 3"
+```
+
+```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
+```
+
+<!-- ```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
+
+<!-- ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
+
+<!-- ```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE} -->
+<!-- ``` -->
+
+  
+  
