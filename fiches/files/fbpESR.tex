@@ -1,0 +1,415 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames*,x11names*}{xcolor}
+%
+\documentclass[
+  8pt,
+  french,
+  ignorenonframetext,
+  landscape]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usetheme[]{Madrid}
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Fiche Bilan-Projet : Université de Strasbourg},
+  pdfauthor={CPESR},
+  pdflang={fr-FR},
+  colorlinks=true,
+  linkcolor=white,
+  filecolor=Maroon,
+  citecolor=Blue,
+  urlcolor=blue,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+%\usepackage[utf8x]{inputenc}
+\usepackage{eurosym}
+%\usepackage{draftwatermark}
+\usepackage[default]{raleway}
+\usepackage[strict]{changepage}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{tikz}
+\usetikzlibrary{
+  calc,
+  positioning
+}
+
+\def\arraystretch{1.5}
+
+% \usepackage{fancyhdr}
+% \makeatletter
+% \renewcommand{\@chapapp}{Partie}
+% \makeatother
+\ifxetex
+  % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[]{french}
+\else
+  \usepackage[shorthands=off,main=french]{babel}
+\fi
+
+\title{Fiche Bilan-Projet : Université de Strasbourg}
+\author{CPESR}
+\date{07/10/2020}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Introduction}
+\protect\hypertarget{introduction}{}
+
+Cette fiche bilan-projet vise à faciliter les élections dans les
+conseils centraux des universités en fournissant une information
+objective et uniformisée sur l'établissement, et en permettant aux
+candidats d'afficher une intention politique structurée et standardisée.
+
+Elle ne prétend ni couvrir l'intégralité des politiques universitaires,
+ni capturer toute la complexité des sujets qu'elle aborde. Cependant,
+son appropriation par les candidats et électeurs doit permettre de poser
+les bases d'un débat électoral sur le projet d'établissement.
+
+Elle se base pour l'essentiel sur la méthodologie utilisée pour élaborer
+les \href{https://cpesr.fr/2020/09/tableau-de-bord-esr/}{tableaux de
+bord de l'ESR}.
+
+\begin{center}\includegraphics[height=0.2\textheight]{files/logo_cpesr_sackersgothic} \end{center}
+
+\begin{block}{Source principale des données}
+
+Portail des données ouvertes du Ministère de l'enseignement supérieur,
+de la recherche et de l'innovation :
+\url{https://data.enseignementsup-recherche.gouv.fr}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Profil général}
+\protect\hypertarget{profil-guxe9nuxe9ral}{}
+
+Le profil général permet de situer rapidement l'établissement parmi
+toutes les universités selon des indicateurs clés de performance (dont
+la description détaillée est disponible dans la suite). Chaque
+université est représentée par un point. La moyenne est inscrite dans
+une boite, et l'axe vertical représente l'écart à la moyenne.
+
+\begin{center}\includegraphics[width=0.6\linewidth]{fbpESR_files/figure-beamer/profil.general-1} \end{center}
+
+\emph{Discussion :} Le profil général permet d'illustrer les deux
+limites principales de cette fiche, dûes seulement aux limites des
+données disponibles :
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{un périmètre non exhaustif} : par exemple les effectifs des
+  personnels BIATSS et vacataires ne sont disponibles ;
+\item
+  \textbf{une granularité limitée à l'établissement} : les hétérogénités
+  internes ne sont pas perceptibles, bien qu'elles puissent être
+  importantes, notamment dans les grandes universités
+  pluridisciplinaires.
+\end{itemize}
+
+\end{frame}
+
+\hypertarget{structure-et-organisation}{%
+\section{Structure et organisation}\label{structure-et-organisation}}
+
+\begin{frame}{Historique}
+\protect\hypertarget{historique}{}
+
+\emph{Définition :} L'historique montre les grandes étapes qui ont
+conduit à l'établissement actuel.
+
+\begin{center}\includegraphics[height=0.6\textheight]{fbpESR_files/figure-beamer/histoire-1} \end{center}
+
+\begin{block}{Question politique afférente}
+
+Quelles fusions, séparations ou changement de statut sont envisagées ?
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Associations}
+\protect\hypertarget{associations}{}
+
+\emph{Définition :} Les associations montrent les adhésions à des
+organisations externes à l'établissement.
+
+\begin{center}\includegraphics[height=0.6\textheight]{fbpESR_files/figure-beamer/associations-1} \end{center}
+
+\begin{block}{Question politique afférente}
+
+Quelles créations ou suppressions d'associations sont envisagées ?
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Composition}
+\protect\hypertarget{composition}{}
+
+\emph{Définition :} La composition montre la structuration interne de
+l'établissement.
+
+\begin{center}\includegraphics[height=0.6\textheight]{fbpESR_files/figure-beamer/composition-1} \end{center}
+
+\begin{block}{Question politique afférente}
+
+Quelles modifications de la structure interne sont envisagées ?
+
+\end{block}
+
+\end{frame}
+
+\hypertarget{indicateurs-cluxe9s-de-performance}{%
+\section{Indicateurs clés de
+performance}\label{indicateurs-cluxe9s-de-performance}}
+
+\begin{frame}{Profil des étudiants}
+\protect\hypertarget{profil-des-uxe9tudiants}{}
+
+\emph{Définition :} Le profil des étudiants est une représentation de
+l'offre de formation de l'établissement, en terme de pyramidage LMD, et
+de développement des diplômes d'université (DU ou diplôme
+d'établissement).
+
+\begin{center}\includegraphics[width=1\linewidth]{fbpESR_files/figure-beamer/profil.etu-1} \end{center}
+
+\begin{block}{Questions politiques afférentes}
+
+\begin{itemize}
+\tightlist
+\item
+  Quelles modifications du profil LMD sont envisagées ?
+\item
+  Quelles évolutions pour les DU (et autres formations payantes) sont
+  envisagées ?
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Profil des enseignants}
+\protect\hypertarget{profil-des-enseignants}{}
+
+\emph{Définition :} Le profil des enseignants est une représentation des
+effectifs, permettant de constater la répartition entre titulaires,
+enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.
+
+\begin{center}\includegraphics[width=1\linewidth]{fbpESR_files/figure-beamer/profil.ens-1} \end{center}
+
+\begin{block}{Question politique afférente}
+
+Quelles modifications des effectifs enseignants sont envisagées ?
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Profil budgétaire}
+\protect\hypertarget{profil-budguxe9taire}{}
+
+\emph{Définition :} Le profil budgétaire est une représentation des
+ressources de l'établissement : ressources complètes, ressources propres
+(hors subvention pour charge de service public), et proportion des
+inscription en DU.
+
+\begin{center}\includegraphics[width=1\linewidth]{fbpESR_files/figure-beamer/profil.fin-1} \end{center}
+
+\begin{block}{Question politique afférente}
+
+Quelles modifications du profil budgétaires sont envisagées ?
+
+\end{block}
+
+\end{frame}
+
+\hypertarget{evolutions}{%
+\section{Evolutions}\label{evolutions}}
+
+\begin{frame}{Taux de ressources propres}
+\protect\hypertarget{taux-de-ressources-propres}{}
+
+\begin{footnotesize}
+
+\emph{Définition :} Le taux de ressources propres mesure les moyens que
+l'établissement obtient en plus des subventions de service public
+versées l'Etat. Ces moyens regroupent notamment les financements sur
+projet et les frais de scolarité. Il reflêtent donc à la fois le
+dynamisme de l'établissement et sa volonté de commercialiser ses
+services. La source principale de ressources propres reste les frais
+d'inscription des étudiants.
+
+\end{footnotesize}
+
+Le taux de ressources propres médian des universités en 2018 est : 18\%.
+
+\begin{center}\includegraphics[width=0.7\linewidth]{fbpESR_files/figure-beamer/kpi.K.proPres-1} \end{center}
+
+\emph{Observation :} Le Taux de ressources propres de Université de
+Strasbourg est passé de 22\% en 2012 (classement : 4/68) à 29\% en 2018
+(classement : 4/68). Son évolution sur cette période est de +30.2\%.
+
+\begin{block}{Questions politiques afférentes}
+
+\begin{itemize}
+\tightlist
+\item
+  L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+\item
+  Quelle devra être l'évolution future et comment y arriver ? Avec
+  quelle priorité ?
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Taux de d'encadrement}
+\protect\hypertarget{taux-de-dencadrement}{}
+
+\emph{Définition :} Le taux d'encadrement est une mesure de la politique
+RH de l'établissement. Il indique le nombre d'enseignants titulaires
+pour 100 étudiants (doctorants non inclus).
+
+Le taux d'encadrement médian des universités en 2018 est : 3.17.
+
+\begin{center}\includegraphics[width=0.7\linewidth]{fbpESR_files/figure-beamer/kpi.K.titPetu-1} \end{center}
+
+\emph{Observation :} Le Taux d'encadrement de Université de Strasbourg
+est passé de 3.7 en 2012 (classement : 26/68) à 3.1 en 2018 (classement
+: 39/68). Son évolution sur cette période est de -16.5\%.
+
+\begin{block}{Questions politiques afférentes}
+
+\begin{itemize}
+\tightlist
+\item
+  L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+\item
+  Quelle devra être l'évolution future et comment y arriver ? Avec
+  quelle priorité ?
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Taux de titularité des enseignants}
+\protect\hypertarget{taux-de-titularituxe9-des-enseignants}{}
+
+\begin{footnotesize}
+
+\emph{Définition :} Le taux de titularité des enseignants est une mesure
+de la politique RH de l'établissement. Il indique la proportion
+d'enseignants titulaires parmi tous les enseignants : doctorants avec
+mission d'enseignement, ATER et contractuels type LRU, exceptés les
+vacataires, pour lesquels les données nationales manquent malgré qu'ils
+puissent être plus nombreux que les enseignants titulaires. Une hausse
+peut aussi bien refléter une politique de titularisation, qu'une
+éviction des non titulaires.
+
+\end{footnotesize}
+
+Le taux de titularité médian des universités en 2018 est : 73\%.
+
+\begin{center}\includegraphics[width=0.7\linewidth]{fbpESR_files/figure-beamer/kpi.K.titPens-1} \end{center}
+
+\emph{Observation :} Le Taux de titularité des enseignants de Université
+de Strasbourg est passé de 67\% en 2012 (classement : 57/68) à 67\% en
+2018 (classement : 54/68). Son évolution sur cette période est de
++0.6\%.
+
+\begin{block}{Questions politiques afférentes}
+
+\begin{itemize}
+\tightlist
+\item
+  L'évolution passée est-elle souhaitable, regretable ou inévitable ?
+\item
+  Quelle devra être l'évolution future et comment y arriver ? Avec
+  quelle priorité ?
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\end{document}
