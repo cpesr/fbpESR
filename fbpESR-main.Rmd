@@ -3,6 +3,7 @@
 knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(fig.align="center")
 knitr::opts_chunk$set(pdf.options(encoding = "CP1250"))
+knitr::opts_chunk$set(dev = "cairo_pdf")
 
 library(tidyverse)
 library(ggthemes)
@@ -11,8 +12,11 @@ library(kpiESR)
 library(wikidataESR)
 library(ggrepel)
 
+library(ggcpesrthemes)
+theme_set(theme_cpesr())
+
 source("fbpESR.R")
-fbp <- fbp_get_data(type, libellé, rentrée.ref)
+fbp <- fbp_get_data(libellé, rentrée.last, rentrée.ref)
 
 #plots <- kpiESR::kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
 
@@ -27,6 +31,7 @@ author: |
   | [www.cpesr.fr](https://cpesr.fr)
   | contact@cpesr.fr
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
+classoption: "aspectratio=169"
 urlcolor: blue
 linkcolor: white
 fontsize: 8pt
@@ -37,20 +42,15 @@ lang: "fr-FR"
 
 
 
-Cette fiche bilan-projet vise à faciliter les élections dans les conseils centraux des universités en fournissant une information objective et uniformisée sur l'établissement, et en permettant aux candidats d'afficher une intention politique structurée et standardisée.
+Cette fiche bilan vise à objectiver les politiques d'établissement, sur la base d'informations publiques et uniformisée par le Ministère, auxquelles des données issues des bilans sociaux peuvent être ajoutées.
 
-Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. Cependant, son appropriation par les candidats et électeurs doit permettre de poser les bases d'un débat électoral sur le projet d'établissement.
+Elle ne prétend ni couvrir l'intégralité des politiques universitaires, ni capturer toute la complexité des sujets qu'elle aborde. 
 
-La méthodologie est essentiellement celle des [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).^[La lecture des radars est expliquée dans la section "Comparaison nationale des indicateurs clés de performance".]
+La méthodologie est essentiellement celle des [tableaux de bord de l'ESR](https://cpesr.fr/2020/09/tableau-de-bord-esr/).
 
 ```{r, out.height = "20%"}
 knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
-```
-
-
-
-### Sources principales des données
-
+``` 
 - Portail des données ouvertes du MESRI : https://data.enseignementsup-recherche.gouv.fr
 - Wikidata ([guide d'édition](https://github.com/cpesr/wikidataESR/blob/master/Rmd/wikidataESR.md)) : `r paste0("https://www.wikidata.org/wiki/",wdid)` 
 - Formulaire de création d'une fiche : https://enquete.cpesr.fr/index.php/881846
@@ -64,27 +64,27 @@ knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
 
 
 ```{r plot_histoire, results='asis', echo = FALSE, warning = FALSE, message=FALSE}
-invisible(make_slide(plot_histoire, "histoire", "Historique",
+make_slide(plot_histoire, "histoire", "Historique",
 "L'historique montre les grandes étapes qui ont conduit à l'établissement actuel.",
-"- Quelles fusions, séparations ou changement de statut sont envisagées ?"))
+"- Quelles fusions, séparations ou changement de statut sont envisagées ?")
 ```
 
 
-```{r plot_association, results='asis', fig.width = 6, fig.height = 4, echo = FALSE, message=FALSE}
+```{r plot_association, results='asis', fig.width = 10, fig.height = 5, echo = FALSE, message=FALSE}
 make_slide(plot_association, "association", "Associations et affiliations",
 "Les associations montrent les adhésions à des organisations externes à l'établissement.",
 "- Quelles créations ou suppressions d'associations et affiliations sont envisagées ?")
 ```
 
 
-```{r plot_composition, results='asis', fig.width = 9, fig.height = 4.5, echo = FALSE, message=FALSE}
+```{r plot_composition, results='asis', fig.width = 10, fig.height = 5, echo = FALSE, message=FALSE}
 make_slide(plot_composition, "composition", "Composition",
 "La composition montre la structuration interne de l'établissement.",
 "- Faut-il réduire ou augmenter le nombre d'unités-composantes ?
 - Faut-il ajouter ou supprimer un niveau intermédiaire ?")
 ```
 
-```{r wdsave, include = FALSE}
+```{r wdsave, include = FALSE, eval=TRUE}
 wikidataESR::wdesr_save_cache()
 ```
 
@@ -92,12 +92,12 @@ wikidataESR::wdesr_save_cache()
 # Trois profils : etudiant, enseignant, et budgétaire.
 
 ```{r kpi.setup}
-knitr::opts_chunk$set(fig.width = 8, fig.height = 3, out.height = NULL, out.width="100%", fig.align="center")
+knitr::opts_chunk$set(fig.width = 10, fig.height = 4, out.height = NULL, out.width="100%", fig.align="center")
 ```
 
 
 ```{r plot_profil_etu, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, "ETU",
+make_slide(plot_kpiesr_profil, "etu",
            "Le profil étudiant",
 "Le profil étudiant est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
 "- Quelles modifications du profil LMD sont envisagées ?
@@ -105,14 +105,14 @@ make_slide(plot_profil, "ETU",
 ```
 
 ```{r plot_evol_etu, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_evolutions, kpiesr_lfc$ETU, "Le profil étudiant : évolution", median = FALSE,
+make_slide(plot_kpiesr, "etu.evol", "Le profil étudiant : évolution", median = FALSE,
 "Le profil étudiant est une représentation de l'offre de formation de l'établissement, en terme de pyramidage LMD, et de développement des diplômes d'université (DU ou diplôme d'établissement).",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
 ```
 
 ```{r plot_profil_ens, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, "ENS",
+make_slide(plot_kpiesr_profil, "ens",
            "Le profil enseignant",
 "Le profil enseignant est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER, et Contrats LRU.",
 "- Quelles modifications des effectifs enseignants sont envisagées ?
@@ -121,11 +121,11 @@ make_slide(plot_profil, "ENS",
 ```
 
 ```{r plot_evol_ens, results='asis', echo = FALSE, warning = FALSE}
-lfc = list( labels = kpiesr_lfc$ENS$labels[-5],
-            factors = kpiesr_lfc$ENS$factors[-5],
-            colors = kpiesr_lfc$ENS$colors[-5],
-            desc = kpiesr_lfc$ENS$desc[-5] )
-make_slide(plot_evolutions, lfc, "Le profil enseignant : évolution", median = FALSE,
+# lfc = list( labels = kpiesr_lfc$ENS$labels[-5],
+#             factors = kpiesr_lfc$ENS$factors[-5],
+#             colors = kpiesr_lfc$ENS$colors[-5],
+#             desc = kpiesr_lfc$ENS$desc[-5] )
+make_slide(plot_kpiesr, "ens.evol", "Le profil enseignant : évolution", median = FALSE,
 "Le profil enseignant est une représentation des effectifs, permettant de constater la répartition entre titulaires, enseignants-chercheurs (EC), Doctorants et ATER.^[Le faible effectif et la forte évolution des contrats LRU ne permet pas de tracer leur évolution proprement.]",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
@@ -133,7 +133,7 @@ make_slide(plot_evolutions, lfc, "Le profil enseignant : évolution", median = F
 
 
 ```{r plot_profil_fin, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_profil, "FIN",
+make_slide(plot_kpiesr_profil, "fin",
            "Le profil budgétaire",
 "Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
 "- Quelles modifications du profil budgétaires sont envisagées ?
@@ -142,7 +142,7 @@ make_slide(plot_profil, "FIN",
 ```
 
 ```{r plot_evol_fin, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_evolutions, kpiesr_lfc$FIN, "Le profil budgétaire : évolution", median = FALSE,
+make_slide(plot_kpiesr, "fin.evol", "Le profil budgétaire : évolution", median = FALSE,
 "Le profil budgétaire est une représentation des ressources de l'établissement : ressources complètes, ressources propres (hors subvention pour charge de service public), et proportion des inscription en DU.",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
@@ -151,8 +151,22 @@ make_slide(plot_evolutions, kpiesr_lfc$FIN, "Le profil budgétaire : évolution"
 
 # Indicateurs clés de performance
 
+```{r profil.setup}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 4, out.width = "100%", fig.align="center")
+```
+
+```{r profil.k, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_kpiesr,"k.norm", "Comparaison nationale des indicateurs clés de performance", "Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon les indicateurs clés de performance. Chaque point correspond à un établissement et le violon montre leur distribution. Les lignes horizontales montrent les valeur pour tout l'ESR (plein) et pour les universités (pointillés).")
+```
+
+
+```{r profil.k.evol, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_kpiesr,"k.evol", "Comparaison nationale de l'évolution des indicateurs clés de performance", "Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon les indicateurs clés de performance. Chaque point correspond à un établissement et le violon montre leur distribution. Les lignes horizontales montrent les valeur pour tout l'ESR (plein) et pour les universités (pointillés).")
+```
+
+
 ```{r evol.setup}
-knitr::opts_chunk$set(fig.width = 7, fig.height = 2.9, out.width = "70%", fig.align="center")
+knitr::opts_chunk$set(fig.width = 9, fig.height = 2.9, out.width = "90%", fig.align="center")
 ```
 
 
@@ -174,8 +188,8 @@ observation = TRUE)
 ```
 
 
-```{r plot_titPetu, results='asis', echo = FALSE, warning = FALSE}
-make_slide(plot_evolution, "kpi.K.titPetu", "Le taux de d'encadrement", unit = "enseignants titulaires pour 100 étudiants",
+```{r plot_ensPetu, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_evolution, "kpi.K.ensPetu", "Le taux de d'encadrement", unit = "enseignants titulaires pour 100 étudiants",
 "Le taux d'encadrement est une mesure de la politique RH de l'établissement. Il indique le nombre d'enseignants titulaires pour 100 étudiants (doctorants non inclus).",
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?",
@@ -207,20 +221,7 @@ make_slide(plot_evolution, "kpi.K.recPect", "Recettes de la recherche par enseig
 observation = TRUE, unit = "€")
 ```
 
-## Comparaison nationale des indicateurs clés de performance 
 
-Le profil général permet de situer rapidement l'établissement parmi toutes les universités selon les indicateurs clés de performance. En fond sont indiquées les valeurs nationales minimales, medianes et maximales. La position des grands points indique le rang de l'établissement pour chacun des indicateurs : plus elle est vers l'extérieur, plus l'établissement est haut dans le classement national. 
-
-```{r profil.general, out.width = NULL, out.height = "55%", fig.width = 6, fig.height = 5}
-kpiesr_plot_kiviat(rentrée.last, fbp$UAI, kpiesr_lfc[["K"]], norm.valeurs=FALSE, omit.first = FALSE, style=kpiesr_style(
-  kvt_plot.margin = ggplot2::unit(c(-2.5,0,-2.5,0), "cm"),
-  kvt_max_y = 1.25,
-  kvt_guide_bg_size = 50,
-  kvt_style="circle"))
-```
-
-### Questions politiques afférentes
-- Quelles modifications de ce profil global sont envisagées ?
 
 <!-- _Discussion :_ Le profil général permet d'illustrer les deux limites principales de cette fiche, dûes seulement aux limites des données disponibles : -->
 

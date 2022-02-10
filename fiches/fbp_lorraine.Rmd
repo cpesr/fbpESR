@@ -15,21 +15,22 @@ output:
       in_header: files/header.tex
       #before_body: before_body.tex
     keep_tex:  true
+classoption: "aspectratio=169"
 urlcolor: blue
 linkcolor: white
 fontsize: 8pt
 lang: "fr-FR"
 #geometry: margin=1.5cm
 #documentclass: book
-classoption: landscape
 ---
-  ```{r config, include=FALSE}
 
-rentrée.ref = 2012
-rentrée.last = 2018
+```{r config, include=FALSE}
 
-type = "Université"
-libellé = "Université de Lorraine"
+rentrée.ref <- 2012
+rentrée.last <- 2019
+
+type <- "Universités et assimilés"
+libellé <- "Université de Lorraine"
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
