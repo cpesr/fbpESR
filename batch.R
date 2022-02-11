@@ -19,7 +19,11 @@ rmdfiles <- c(
   "rouen",
   "upec"
 )
-  
+ 
+rmdfiles <- c(
+  "lorraine"
+)
+ 
 for(rmdfile in rmdfiles) {
   rmarkdown::render(paste0("fiches/fbp_",rmdfile,".Rmd"))
 }

@@ -83,8 +83,8 @@ euro_k <- function(x) {
 
 merge_and_add_kpis <- function(fbp) {
   
-  fbp$etab <- merge(all = TRUE,
-    fbp$etab,
+  fbp$esr <- merge(all = TRUE,
+    fbp$esr,
     fbp$extradata.kpi) 
   
   if(fbp$extradata$hecunite == "Heures") {
@@ -93,7 +93,7 @@ merge_and_add_kpis <- function(fbp) {
     hec.labels <- function(valeur) paste(format(round(valeur/1000,2), big.mark=" "),"k€")
   }
   
-  fbp$etab.pnl <- fbp$etab %>%
+  fbp$esr.pnl <- fbp$esr %>%
     transmute (
       Rentrée = Rentrée,
       UAI = UAI,
@@ -115,7 +115,7 @@ merge_and_add_kpis <- function(fbp) {
       )
     ) %>%
     filter(!is.na(valeur)) %>%
-    bind_rows(fbp$etab.pnl) %>%
+    bind_rows(fbp$esr.pnl) %>%
     mutate(kpi = factor(kpi))
   
   return(fbp)
@@ -124,30 +124,35 @@ merge_and_add_kpis <- function(fbp) {
 
 
 
-fbp_get_data <- function(type, libellé, rentrée.min = 2000, dir=".") {
+fbp_get_data <- function(libellé, rentrée = 2019, rentrée.min = 2000, dir=".") {
 
   fbp <- read.extradata(libellé, dir)
-  
   fbp$Libellé <- libellé
-  fbp$UAI <- kpiESR::esr.uais[[type]][[libellé]]
-  if(is.null(fbp$UAI)) error("UAI non trouvé.")
   
-  fbp$etab <- kpiESR::esr %>% filter(UAI == fbp$UAI) 
-  fbp$etab.pnl <- kpiESR::esr.pnl %>% filter(UAI == fbp$UAI) %>%
+  fbp$etab <- kpiESR::esr.etab %>% filter(Etablissement==libellé)
+  if(nrow(fbp$etab)==0) stop("UAI non trouvé.")
+  
+  fbp$groupe <- as.character(fbp$etab$Groupe)
+  fbp$UAI <- fbp$etab$UAI
+  
+  fbp$plots <- kpiESR::kpiesr_plot_all(rentrée, fbp$UAI, fbp$groupe) 
+  
+  fbp$esr <- kpiESR::esr %>% filter(UAI == fbp$UAI) 
+  fbp$esr.pnl <- kpiESR::esr.pnl %>% filter(UAI == fbp$UAI) %>%
     filter(as.character(Rentrée) >= rentrée.min) 
   
   if(!is.null(fbp$extradata.kpi)) {
     fbp <- merge_and_add_kpis(fbp)
   }
   
-  fbp$etab.pnl <- fbp$etab.pnl%>% 
+  fbp$esr.pnl <- fbp$esr.pnl %>% 
     filter(!is.na(valeur)) %>%
     group_by(kpi) %>%
     filter(valeur != 0) %>%
     mutate( Evolution = valeur / first(valeur) - 1 )
   
   fbp$limits.evolution <- range(
-    filter(fbp$etab.pnl,
+    filter(fbp$esr.pnl,
            kpi %in% c("kpi.K.dotPres",
                       "kpi.K.titPetu",
                       "kpi.K.titPens",
@@ -163,7 +168,7 @@ fbp_get_data <- function(type, libellé, rentrée.min = 2000, dir=".") {
 # 
 # fbp1 <- fbp_get_data("Université", "Université de test")
 # fbp2 <- fbp_get_data("Université", "Université de Lorraine")
-# fbp3 <- fbp_get_data("Université", "Université de Strasbourg", 2012)
+# fbp3 <- fbp_get_data("Université", "Université de Strasbourg")
 # fbp <- fbp_get_data("Université", "Université de Tours", 2012)
 # 
 

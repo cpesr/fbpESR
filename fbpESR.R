@@ -14,16 +14,14 @@ netab <- kpiESR::esr.pnl %>%
   group_by(Rentrée) %>%
   summarise(n = max(rang, na.rm = T))
 netab <- max(netab$n)
-
-
   
 
 plot_evolution <- function(fbp, thekpi) {
-  df <- fbp$etab.pnl %>% filter(kpi == thekpi)
+  df <- fbp$esr.pnl %>% filter(kpi == thekpi)
   if(nrow(df) == 0) stop("Données manquantes")
   
-  fbp$limits.evolution[1] <- min(c(df$Evolution, fbp$limits.evolution[1]))
-  fbp$limits.evolution[2] <- max(c(df$Evolution, fbp$limits.evolution[2]))
+  fbp$limits.evolution[1] <- min(c(0.01,df$Evolution, fbp$limits.evolution[1]))
+  fbp$limits.evolution[2] <- max(c(0.01,df$Evolution, fbp$limits.evolution[2]))*1.1
   mle = max(abs(fbp$limits.evolution))
   
   ggplot(df, aes(x=Rentrée,y=Evolution, label=valeur_label, group=1)) + 
@@ -35,12 +33,13 @@ plot_evolution <- function(fbp, thekpi) {
     scale_y_continuous(labels = percent_format, limits=fbp$limits.evolution) +
     #scale_y_continuous(labels = percent_format) +
     scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
+    coord_cartesian(clip="off") +
     theme_hc() + guides(fill = FALSE)
 }
 
 
 plot_evolutions <- function(fbp, lfc) {
-  df <- fbp$etab.pnl %>% filter(kpi %in% lfc$factors)
+  df <- fbp$esr.pnl %>% filter(kpi %in% lfc$factors)
   if(nrow(df) == 0) stop("Données manquantes")
   
   mle = max(abs(df$Evolution))
@@ -58,7 +57,8 @@ plot_evolutions <- function(fbp, lfc) {
     scale_linetype_discrete(labels = lfc$labels, limits = lfc$factors,
                        name = "Indicateurs") +
     scale_fill_distiller(palette = "RdBu", limits=c(-mle,mle)) +
-    theme_hc() + guides(fill = FALSE)
+    guides(fill = FALSE) +
+    coord_cartesian(clip="off") 
 }
 
  
@@ -68,7 +68,7 @@ plot_evolutions <- function(fbp, lfc) {
 # plot_evolutions(fbp,kpiesr_lfc$ENS)
 
 plot_dotation <- function(fbp, ...) {
-  fbp$etab.pnl %>%
+  fbp$esr.pnl %>%
     filter(str_detect(kpi, "kpi.D" )) %>%
     ggplot(aes(x=Rentrée,y=valeur, label=valeur_label, group=kpi, color=kpi)) + 
     #geom_vline(xintercept=c("2012","2016")) +
@@ -89,24 +89,24 @@ plot_dotation <- function(fbp, ...) {
 #dotation.graph(fbp)
 
 # txt_val <- function(fbp, thekpi, therentrée) {
-#   filter(fbp$etab.pnl, kpi == thekpi, Rentrée == therentrée)$valeur_label
+#   filter(fbp$esr.pnl, kpi == thekpi, Rentrée == therentrée)$valeur_label
 # }
 # 
 # txt_rang <- function(fbp, thekpi, therentrée) {
-#   rang <- filter(fbp$etab.pnl, kpi == thekpi, Rentrée == therentrée)$rang
+#   rang <- filter(fbp$esr.pnl, kpi == thekpi, Rentrée == therentrée)$rang
 #   paste0(rang,"/",netab)
 # }
 # 
 # txt_evol <- function(fbp, thekpi, therentrée1, therentrée2) {
-#   filter(fbp$etab.pnl, kpi == thekpi, Rentrée %in% c(therentrée1,therentrée2)) %>%
+#   filter(fbp$esr.pnl, kpi == thekpi, Rentrée %in% c(therentrée1,therentrée2)) %>%
 #     summarise(evol = percent_format(last(valeur) / first(valeur) - 1)) %>%
 #     select(evol) %>%
 #     as.character()
 # }
 
 txt_obs <- function(fbp, thekpiname, thekpi) {
-  r1 <- filter(fbp$etab.pnl, kpi == thekpi) %>% head(1)
-  r2 <- filter(fbp$etab.pnl, kpi == thekpi) %>% tail(1)
+  r1 <- filter(fbp$esr.pnl, kpi == thekpi) %>% head(1)
+  r2 <- filter(fbp$esr.pnl, kpi == thekpi) %>% tail(1)
   
   if(nrow(r1) == 0 || nrow(r2) == 0) {
     return("")
@@ -136,10 +136,9 @@ txt_median <- function(thekpi, unit = "%") {
 
 plot_histoire <- function(...) {
   wikidataESR::wdesr_load_and_plot(wdid, c('prédécesseur', 'séparé_de'), depth=10, 
+                      size = 1,
                       node_label = "alias_date",
-                      legend_position="none",
-                      node_sizes = 15, label_sizes = 2,
-                      arrow_gap = 0.0, margin_y = 0.15) 
+                      legend_position="none") 
 }
 
 plot_composition <- function(...) {
@@ -152,11 +151,12 @@ plot_association <- function(...) {
                       legend_position="none", margin_y = 0.1) 
 }
 
+
 plot_profil <- function(fbp, thekpi,...) {
   plot_grid(ncol=2,  
             plotlist = list(
               kpiesr_plot_primaire(rentrée.last, fbp$UAI, kpiesr_lfc[[substr(thekpi,1,3)]]),
-              kpiesr_plot_kiviat(rentrée.last, fbp$UAI, kpiesr_lfc[[thekpi]],
+              kpiesr_plot_norm_simple_try(rentrée.last, fbp$UAI, kpiesr_lfc[[thekpi]],
                                  style=kpiESR::kpiesr_style(
                                    point_size = 10,
                                    line_size = 1,
@@ -171,9 +171,20 @@ plot_profil <- function(fbp, thekpi,...) {
   )
 }
 
+plot_kpiesr_profil <- function(fbp, thekpi,...) {
+  plot_grid(ncol=2,  
+              fbp$plots[[paste0(thekpi,".abs")]] + theme(axis.title.x = element_blank(), axis.title.y = element_blank()),
+              fbp$plots[[paste0(thekpi,".norm")]]  + theme(axis.title.x = element_blank(), axis.title.y = element_blank())
+  )
+}
+
+plot_kpiesr <- function(fbp, thekpi) {
+  fbp$plots[[thekpi]]  + theme(axis.title.x = element_blank(), axis.title.y = element_blank())
+}
+
 error_list <- list()
 
-make_slide <- function(plotfun, thekpi, thekpiname, definition, questions, 
+make_slide <- function(plotfun, thekpi, thekpiname, definition, questions="", 
                        small=FALSE, 
                        unit = "%",
                        median = TRUE,
@@ -196,7 +207,7 @@ make_slide <- function(plotfun, thekpi, thekpiname, definition, questions,
 
   if(observation) cat(txt_obs(fbp, thekpiname, thekpi),"\n\n")
 
-  cat("### Questions politiques afférentes\n\n", questions)
+  #cat("### Questions politiques afférentes\n\n", questions)
 
 }
 
