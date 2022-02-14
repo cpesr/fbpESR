@@ -36,8 +36,8 @@ libellé <- "Université de Lorraine"
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
 ```
 
-<!-- ```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE} -->
-<!-- ``` -->
+```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE}
+```
 
 <!-- ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE} -->
 <!-- ``` -->
