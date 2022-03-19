@@ -25,7 +25,7 @@ wikidataESR::wdesr_load_cache()
 ```
 
 ---
-title: "Fiche Bilan-Projet : `r fbp$Libellé`"
+title: "Fiche Bilan Personnalisée : `r fbp$Libellé`"
 author: |
   | CPESR
   | [www.cpesr.fr](https://cpesr.fr)
@@ -88,6 +88,51 @@ make_slide(plot_composition, "composition", "Composition",
 wikidataESR::wdesr_save_cache()
 ```
 
+# Positionnements
+
+```{r map.setup}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 6, out.height = "90%", out.width = NULL, fig.align = "center")
+```
+
+
+```{r pos.etuXtit, results='asis'}
+make_slide_simple(
+plot_map(fbp, xvar="kpi.ETU.P.effectif", yvar="kpi.ENS.S.titulaires", xlabel=15000,ylabel=2700) +
+  xlab("Effectifs étudiants") + ylab("Effectifs enseignants titulaires"),
+  "Etudiants et enseignants")
+```  
+  
+```{r pos.xPetu, results='asis'}
+make_slide_simple(
+  plot_map(fbp, xvar="kpi.K.resPetu", yvar="kpi.K.ensPetu", xlabel=1000,ylabel=7) +
+      scale_x_continuous(label = ~ paste(.x, "€"), name="Budget par étudiant", limits = c(0,15000)) +
+      scale_y_continuous(name="Titulaires pour 100 étudiants"),
+  "Budget et titulaires par étudiant")
+```
+
+```{r pos.fin, results='asis'}
+make_slide_simple(
+  plot_map(fbp, xvar="kpi.K.forPetu", yvar="kpi.K.recPect", xlabel=500,ylabel=5000) +
+    scale_x_continuous(label = ~ paste(.x, "€"), name="Recette propres formation par étudiant", limits = c(0,1000)) +
+    scale_y_continuous(label = ~ paste(.x/1e3, "k€"), name="Recette propres recherche par EC titulaire", limits = c(0,50000)),
+  "Recettes propres formation et recherche")
+```
+
+```{r pos.LxM, results='asis'}
+make_slide_simple(
+  plot_map(fbp, xvar="kpi.ETU.S.cycle1_L/kpi.ETU.P.effectif", yvar="kpi.ETU.S.cycle2_M/kpi.ETU.P.effectif", xlabel=0.01,ylabel=0.25) +
+  scale_x_continuous(label = scales::percent, name="Proportion d'étudiants en 1er cycle (L)") +
+  scale_y_continuous(label = scales::percent, name="Proportion d'étudiants en 2e cycle (M)"),
+  "Equilibre premier et second cycle")
+```
+
+```{r pos.titXprec, results='asis'}
+make_slide_simple(
+  plot_map(fbp, xvar="kpi.ENS.S.titulaires/kpi.ENS.P.effectif", yvar="kpi.ENS.S.DocATER/kpi.ENS.P.effectif", xlabel=0.42,ylabel=0.13) +
+    scale_x_continuous(label = scales::percent, name="Proportion d'enseignant et/ou chercheurs titulaires") +
+    scale_y_continuous(label = scales::percent, name="Proportion de doctorants"),
+  "Titularité et doctorants")
+```
 
 # Trois profils : etudiant, enseignant, et budgétaire.
 

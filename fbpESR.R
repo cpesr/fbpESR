@@ -211,3 +211,50 @@ make_slide <- function(plotfun, thekpi, thekpiname, definition, questions="",
 
 }
 
+### Maps
+
+make_slide_simple <- function(plot, title) {
+  
+  cat("## ",title,"\n\n")
+  
+  #cat("_Définition :_ ", definition,"\n\n")
+  
+  #if(median) cat(txt_median(thekpi, unit),"\n\n")
+  
+  print(plot)
+  
+  #if(observation) cat(txt_obs(fbp, thekpiname, thekpi),"\n\n")
+  
+  #cat("### Questions politiques afférentes\n\n", questions)
+  
+}
+
+univ <- kpiESR::esr %>%
+  filter(Groupe == "Universités et assimilés") %>% 
+  filter(! is.na(kpi.FIN.P.ressources)) %>%
+  left_join(kpiESR::esr.etab) %>%
+  mutate(PerimEx = replace_na(PerimEx,"Autre") ) 
+
+plot_map <- function(fbp, xvar, yvar,rentrée=2019,xlabel=1,ylabel=1) {
+  
+  the.univ <- univ %>%
+    filter(Rentrée == rentrée, Etablissement == fbp$Libellé)
+  
+  univ %>%
+    filter(Rentrée == rentrée) %>% 
+    mutate(label = ifelse(Etablissement == "Université de Lorraine", NA, Etablissement)) %>%
+    ggplot(aes_string(x= xvar, y=yvar,size="kpi.ETU.P.effectif", color = "PerimEx")) +
+    ggrepel::geom_text_repel(aes(label=label), size = 3, color="grey") +
+    geom_point() + 
+    ggrepel::geom_text_repel(data = the.univ, aes(label=Etablissement), size=5, color="black", xlim=c(xlabel,xlabel), ylim=c(ylabel,ylabel)) +
+    geom_point(data = the.univ, shape = 21, stroke = 1, color="black", fill="#ae2573") +
+    scale_color_discrete(name="Type") +
+    scale_fill_discrete(name="", guide="none") +
+    scale_size(range=c(0.1,6), name="Etudiants") +
+    theme_cpesr() + 
+    theme(
+      panel.grid.major.x = element_line(color = "#D8D8D8", size = 0.1),
+      panel.grid.major.y = element_line(color = "#D8D8D8", size = 0.1)) +
+    guides(colour = guide_legend(override.aes = list(size=4)))
+}
+
