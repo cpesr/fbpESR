@@ -15,6 +15,9 @@ library(ggrepel)
 library(ggcpesrthemes)
 theme_set(theme_cpesr())
 
+rentrée.ref = 2012
+rentrée.last = 2019
+
 source("fbpESR.R")
 fbp <- fbp_get_data(libellé, rentrée.last, rentrée.ref)
 
@@ -104,7 +107,7 @@ plot_map(fbp, xvar="kpi.ETU.P.effectif", yvar="kpi.ENS.S.titulaires", xlabel=150
   
 ```{r pos.xPetu, results='asis'}
 make_slide_simple(
-  plot_map(fbp, xvar="kpi.K.resPetu", yvar="kpi.K.ensPetu", xlabel=1000,ylabel=7) +
+  plot_map(fbp, xvar="kpi.K.resPetu", yvar="kpi.K.ensPetu", xlabel=1000,ylabel=5) +
       scale_x_continuous(label = ~ paste(.x, "€"), name="Budget par étudiant", limits = c(0,15000)) +
       scale_y_continuous(name="Titulaires pour 100 étudiants"),
   "Budget et titulaires par étudiant")

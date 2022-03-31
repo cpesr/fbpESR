@@ -8,6 +8,7 @@ rmdfiles <- c(
   "orleans",
   "paris13",
   "tours",
+  "ub",
   "uha",
   "unistra",
   "upem",
@@ -20,10 +21,8 @@ rmdfiles <- c(
   "upec"
 )
  
-rmdfiles <- c(
-  "lorraine"
-)
- 
+
 for(rmdfile in rmdfiles) {
+  print(rmdfile)
   rmarkdown::render(paste0("fiches/fbp_",rmdfile,".Rmd"))
 }

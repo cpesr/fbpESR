@@ -1,9 +1,4 @@
 ---
-author: |
-  | CPESR
-  | [www.cpesr.fr](https://cpesr.fr)
-  | contact@cpesr.fr
-date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
   beamer_presentation:
     # toc: true
@@ -14,22 +9,11 @@ output:
     includes:
       in_header: files/header.tex
       #before_body: before_body.tex
-    keep_tex:  true
-urlcolor: blue
-linkcolor: white
-fontsize: 8pt
-lang: "fr-FR"
-#geometry: margin=1.5cm
-#documentclass: book
-classoption: landscape
+    keep_tex:  false
 ---
 
-```{r config, echo=FALSE, warning = FALSE, message = FALSE, include=FALSE}
-
-rentrée.ref = 2012
-rentrée.last = 2018
-
-type = "Université"
+```{r config, include=FALSE}
+type <- "Universités et assimilés"
 libellé = "Université Paris-Est Marne-la-Vallée"
 ```
 

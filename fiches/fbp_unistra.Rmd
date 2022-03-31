@@ -9,13 +9,11 @@ output:
     includes:
       in_header: files/header.tex
       #before_body: before_body.tex
-    keep_tex:  true
+    keep_tex:  false
 ---
 
 ```{r config, include=FALSE}
-rentrée.ref = 2012
-rentrée.last = 2019
-
+type <- "Universités et assimilés"
 libellé = "Université de Strasbourg"
 ```
 

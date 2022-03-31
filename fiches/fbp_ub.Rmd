@@ -14,14 +14,14 @@ output:
 
 ```{r config, include=FALSE}
 type <- "Universités et assimilés"
-libellé = "Université Paris 1 - Panthéon Sorbonne"
+libellé <- "Université de Bourgogne"
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
 ```
 
-<!-- ```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE} -->
-<!-- ``` -->
+```{r child = '../fbpESR-extra-heures.Rmd', echo = FALSE, warning = FALSE}
+```
 
 <!-- ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE} -->
 <!-- ``` -->
