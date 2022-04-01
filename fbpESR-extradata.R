@@ -24,6 +24,20 @@ import_limesurvey <- function(edfile="results-survey881846.csv", dir=".") {
     write.csv2(extradatafile, row.names = FALSE)
 }
 
+read_and_pivot_extradata <- function() {
+  ed <- read.csv2("extradata/extradata.csv") %>%
+    select(Libellé,hec.2010_HeE.:dotliens.2020.) %>%
+    pivot_longer(matches("(.*).(20..)_(.*)."),
+                 names_pattern = "(.*).(20..)_(.*).",
+                 names_to = c("groupe","rentrée","type"),
+                 values_to = "valeur") %>%
+    select(Libellé,rentrée,groupe,type,valeur) %>%
+    pivot_wider(names_from = c(groupe,type),
+                values_from = valeur)
+
+  
+}
+
 get_extradata_array <- function(extradata, qid, twodim = FALSE) {
   pat <- ifelse(twodim, paste0(qid,".(.*)_(.*)."), paste0(qid,".(.*)(.*)."))
   extradata %>%
