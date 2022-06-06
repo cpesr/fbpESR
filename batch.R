@@ -18,7 +18,9 @@ rmdfiles <- c(
   "paris1",
   "paris3",
   "rouen",
-  "upec"
+  "upec",
+  "bourgogne",
+  "paris8"
 )
  
 

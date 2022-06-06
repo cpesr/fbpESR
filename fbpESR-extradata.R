@@ -99,7 +99,7 @@ merge_and_add_kpis <- function(fbp) {
       valeur_label = case_when(
         kpi == "kpi.H.hcvPhee" ~ scales::percent(valeur,0.1),
         startsWith(kpi, "kpi.D") ~ euro_k(valeur),
-        TRUE ~ format(valeur, big.mark=" ", digits=0),
+        TRUE ~ format(valeur, big.mark=" ", digits=1),
       )
     ) %>%
     filter(!is.na(valeur)) %>%
@@ -156,9 +156,9 @@ fbp_get_data <- function(libellé, rentrée = 2019, rentrée.min = 2000, dir="."
   return(fbp)
 }
 # 
-# fbp1 <- fbp_get_data("Université", "Université de test")
-# fbp2 <- fbp_get_data("Université", "Université de Lorraine")
-# fbp3 <- fbp_get_data("Université", "Université de Strasbourg")
-# fbp <- fbp_get_data("Université", "Université de Tours", 2012)
+# fbp1 <- fbp_get_data("Université de test")
+# fbp2 <- fbp_get_data("Université de Lorraine")
+# fbp3 <- fbp_get_data("Université de Strasbourg")
+# fbp <- fbp_get_data("Université de Tours", 2012)
 # 
 
