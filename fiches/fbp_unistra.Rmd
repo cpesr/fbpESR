@@ -26,6 +26,6 @@ libellé = "Université de Strasbourg"
 ```{r child = '../fbpESR-extra-dotations.Rmd', echo = FALSE, warning = FALSE}
 ```
 
-```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE}
+```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE, eval=FALSE}
 ```
 

@@ -14,7 +14,7 @@ output:
 
 ```{r config, include=FALSE}
 type <- "Universités et assimilés"
-libellé = "Nantes Université"
+libellé = "Université Bordeaux Montaigne"
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}
@@ -29,4 +29,5 @@ libellé = "Nantes Université"
 <!-- ```{r child = '../fbpESR-extra-liens.Rmd', echo = FALSE, warning = FALSE} -->
 <!-- ``` -->
 
-
+  
+  

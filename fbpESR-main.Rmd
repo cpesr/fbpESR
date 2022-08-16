@@ -100,22 +100,31 @@ knitr::opts_chunk$set(fig.width = 10, fig.height = 6, out.height = "90%", out.wi
 
 ```{r pos.etuXtit, results='asis'}
 make_slide_simple(
-plot_map(fbp, xvar="kpi.ETU.P.effectif", yvar="kpi.ENS.S.titulaires", xlabel=15000,ylabel=2700) +
-  xlab("Effectifs étudiants") + ylab("Effectifs enseignants titulaires"),
-  "Etudiants et enseignants")
-```  
+plot_map(fbp, xvar="kpi.ETU.P.effectif", yvar="kpi.ENS.P.effectif+kpi.BIA.P.effectif", xlabel=100,ylabel=5000) +
+  xlab("Effectifs étudiants") + ylab("Effectifs enseignants et BIATSS"),
+  "Etudiants et personnels")
+```
+
+
+```{r pos.biaXens, results='asis'}
+make_slide_simple(
+plot_map(fbp, xvar="kpi.ENS.P.effectif", yvar="kpi.BIA.P.effectif", xlabel=100,ylabel=2700) +
+  xlab("Effectifs enseignants") + ylab("Effectifs BIATSS"),
+  "Enseignants et personnels BIATSS")
+```
+
   
 ```{r pos.xPetu, results='asis'}
 make_slide_simple(
-  plot_map(fbp, xvar="kpi.K.resPetu", yvar="kpi.K.ensPetu", xlabel=1000,ylabel=5) +
-      scale_x_continuous(label = ~ paste(.x, "€"), name="Budget par étudiant", limits = c(0,15000)) +
-      scale_y_continuous(name="Titulaires pour 100 étudiants"),
-  "Budget et titulaires par étudiant")
+  plot_map(fbp, xvar="kpi.K.resPetu", yvar="kpi.K.ensPetu", xlabel=4100,ylabel=5) +
+      scale_x_continuous(label = ~ paste(.x, "€"), name="Budget par étudiant", limits=c(4000,13000)) +
+      scale_y_continuous(name="Enseignants titulaires pour 100 étudiants"),
+  "Budget et taux d'encadrement pédagogique")
 ```
 
 ```{r pos.fin, results='asis'}
 make_slide_simple(
-  plot_map(fbp, xvar="kpi.K.forPetu", yvar="kpi.K.recPect", xlabel=500,ylabel=5000) +
+  plot_map(fbp, xvar="kpi.K.forPetu", yvar="kpi.K.recPect", xlabel=50,ylabel=35000) +
     scale_x_continuous(label = ~ paste(.x, "€"), name="Recette propres formation par étudiant", limits = c(0,1000)) +
     scale_y_continuous(label = ~ paste(.x/1e3, "k€"), name="Recette propres recherche par EC titulaire", limits = c(0,50000)),
   "Recettes propres formation et recherche")
@@ -123,21 +132,31 @@ make_slide_simple(
 
 ```{r pos.LxM, results='asis'}
 make_slide_simple(
-  plot_map(fbp, xvar="kpi.ETU.S.cycle1_L/kpi.ETU.P.effectif", yvar="kpi.ETU.S.cycle2_M/kpi.ETU.P.effectif", xlabel=0.01,ylabel=0.25) +
-  scale_x_continuous(label = scales::percent, name="Proportion d'étudiants en 1er cycle (L)") +
-  scale_y_continuous(label = scales::percent, name="Proportion d'étudiants en 2e cycle (M)"),
-  "Equilibre premier et second cycle")
+  plot_map(fbp, xvar="kpi.ETU.S.cycle1_L", yvar="kpi.ETU.S.cycle2_M+kpi.ETU.S.cycle3_D", xlabel=100,ylabel=20000) +
+  scale_x_continuous(name="Proportion d'étudiants en 1er cycle (L)") +
+  scale_y_continuous(name="Proportion d'étudiants en 2e et 3e cycle (M+D)"),
+  "Equilibre premier et second/troisième cycle")
 ```
 
-```{r pos.titXprec, results='asis'}
+```{r pos.titXtit, results='asis'}
 make_slide_simple(
-  plot_map(fbp, xvar="kpi.ENS.S.titulaires/kpi.ENS.P.effectif", yvar="kpi.ENS.S.DocATER/kpi.ENS.P.effectif", xlabel=0.42,ylabel=0.13) +
-    scale_x_continuous(label = scales::percent, name="Proportion d'enseignant et/ou chercheurs titulaires") +
-    scale_y_continuous(label = scales::percent, name="Proportion de doctorants"),
-  "Titularité et doctorants")
+  plot_map(fbp, xvar="kpi.ENS.S.titulaires/kpi.ENS.P.effectif", yvar="kpi.BIA.S.titulaires/kpi.BIA.P.effectif", xlabel=0.50,ylabel=0.75) +
+    scale_x_continuous(label = scales::percent, name="Proportion d'E-EC titulaires", limits = c(0.50,0.90)) +
+    scale_y_continuous(label = scales::percent, name="Proportion de BIATSS titulaires", limits = c(0.40,0.85)),
+  "Titularité des enseignants et BIATSS")
 ```
 
-# Trois profils : etudiant, enseignant, et budgétaire.
+
+```{r pos.ensXbia, results='asis'}
+make_slide_simple(
+  plot_map(fbp, xvar="kpi.ENS.P.effectif/kpi.ETU.P.effectif*100", yvar="kpi.BIA.P.effectif/kpi.ETU.P.effectif*100", xlabel=2,ylabel=7) +
+    scale_x_continuous(name="Nombre d'E-EC pour 100 étudiants", limits=c(2,8)) +
+    scale_y_continuous(name="Nombre de BIATSS pour 100 étudiants", limits=c(2,8)),
+  "Encadrements pédagogique et administratif")
+```
+
+
+# Quatre profils : etudiant, BIATSS, enseignant, et budgétaire.
 
 ```{r kpi.setup}
 knitr::opts_chunk$set(fig.width = 10, fig.height = 4, out.height = NULL, out.width="100%", fig.align="center")
@@ -158,6 +177,24 @@ make_slide(plot_kpiesr, "etu.evol", "Le profil étudiant : évolution", median =
 "- L'évolution passée est-elle souhaitable, regrettable ou inévitable ?
 - Quelle devra être l'évolution future et comment y arriver ? Avec quelle priorité ?")
 ```
+
+
+```{r plot_profil_bia, results='asis', echo = FALSE, warning = FALSE}
+make_slide(plot_kpiesr_profil, "bia",
+           "Le profil BIATSS",
+"Le profil BIATSS est une représentation des effectifs, permettant de constater la répartition entre catégories et titularité","")
+
+```
+
+```{r plot_evol_bia, results='asis', echo = FALSE, warning = FALSE}
+# lfc = list( labels = kpiesr_lfc$ENS$labels[-5],
+#             factors = kpiesr_lfc$ENS$factors[-5],
+#             colors = kpiesr_lfc$ENS$colors[-5],
+#             desc = kpiesr_lfc$ENS$desc[-5] )
+make_slide(plot_kpiesr, "bia.evol", "Le profil BIATSS : évolution", median = FALSE,
+"Le profil BIATSS est une représentation des effectifs, permettant de constater la répartition entre catégories et titularité","")
+```
+
 
 ```{r plot_profil_ens, results='asis', echo = FALSE, warning = FALSE}
 make_slide(plot_kpiesr_profil, "ens",

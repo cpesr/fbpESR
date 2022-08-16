@@ -243,7 +243,7 @@ plot_map <- function(fbp, xvar, yvar,rentrée=2019,xlabel=1,ylabel=1) {
   univ %>%
     filter(Rentrée == rentrée) %>% 
     mutate(label = ifelse(Etablissement == "Université de Lorraine", NA, Etablissement)) %>%
-    ggplot(aes_string(x= xvar, y=yvar,size="kpi.ETU.P.effectif", color = "PerimEx")) +
+    ggplot(aes_string(x=xvar, y=yvar, size="kpi.ETU.P.effectif", color = "PerimEx")) +
     ggrepel::geom_text_repel(aes(label=label), size = 3, color="grey") +
     geom_point() + 
     ggrepel::geom_text_repel(data = the.univ, aes(label=Etablissement), size=5, color="black", xlim=c(xlabel,xlabel), ylim=c(ylabel,ylabel)) +
