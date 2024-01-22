@@ -76,7 +76,7 @@ merge_and_add_kpis <- function(fbp) {
              )
       )
     ) %>%
-    mutate(Rentrée = as.character(Rentrée)) %>%
+    mutate(Rentrée = as.numeric(Rentrée)) %>%
     select(Rentrée,Heures.HeE:Dotations.vieet)
 
   fbp$esr <- full_join(fbp$esr,fbp$extradata.kpi) 
@@ -85,6 +85,7 @@ merge_and_add_kpis <- function(fbp) {
     transmute (
       Rentrée = Rentrée,
       UAI = UAI,
+      pid = pid,
       kpi.H.heePetu = Heures.HeE / (kpi.ETU.S.cycle1_L + kpi.ETU.S.cycle2_M),
       kpi.H.hctPtit = Heures.HeCT / kpi.ENS.S.titulaires,
       kpi.H.hcvPhee = 1 - Heures.HeCT / Heures.HeC,
@@ -94,7 +95,7 @@ merge_and_add_kpis <- function(fbp) {
       kpi.D.aaprech = Dotations.aapre,
       kpi.D.vieetu = Dotations.vieet
     ) %>%
-    pivot_longer(-c(Rentrée,UAI), names_to="kpi", values_to="valeur") %>%
+    pivot_longer(-c(Rentrée,pid,UAI), names_to="kpi", values_to="valeur") %>%
     mutate(
       valeur_label = case_when(
         kpi == "kpi.H.hcvPhee" ~ scales::percent(valeur,0.1),
@@ -118,19 +119,21 @@ fbp_get_data <- function(libellé, rentrée = 2019, rentrée.min = 2000, dir="."
   fbp$Libellé <- libellé
 
   fbp$etab <- kpiESR::esr.etab %>% filter(Etablissement==libellé)
-  if(nrow(fbp$etab)==0) stop("UAI non trouvé.")
+  if(nrow(fbp$etab)==0) stop("pid non trouvé.")
   
   fbp$groupe <- as.character(fbp$etab$Groupe)
   fbp$UAI <- fbp$etab$UAI
+  fbp$pid <- fbp$etab$pid
     
   fbp$extradata <- read.csv2("extradata/extradata.csv") %>%
     filter(Libellé == libellé)
   
   
-  fbp$plots <- kpiESR::kpiesr_plot_all(rentrée, fbp$UAI, fbp$groupe) 
+  fbp$plots <- kpiESR::kpiesr_plot_all(rentrée, fbp$pid, fbp$groupe) 
   
-  fbp$esr <- kpiESR::esr %>% filter(UAI == fbp$UAI) 
-  fbp$esr.pnl <- kpiESR::esr.pnl %>% filter(UAI == fbp$UAI) %>%
+  fbp$esr <- kpiESR::esr %>% filter(pid == fbp$pid) %>%
+    left_join(kpiESR::esr.etab %>% select(pid,UAI))
+  fbp$esr.pnl <- kpiESR::esr.pnl %>% filter(pid == fbp$pid) %>%
     filter(as.character(Rentrée) >= rentrée.min) 
   
   fbp <- merge_and_add_kpis(fbp)
@@ -157,7 +160,7 @@ fbp_get_data <- function(libellé, rentrée = 2019, rentrée.min = 2000, dir="."
 }
 # 
 # fbp1 <- fbp_get_data("Université de test")
-# fbp2 <- fbp_get_data("Université de Lorraine")
+fbp2 <- fbp_get_data("Université de Lorraine")
 # fbp3 <- fbp_get_data("Université de Strasbourg")
 # fbp <- fbp_get_data("Université de Tours", 2012)
 # 

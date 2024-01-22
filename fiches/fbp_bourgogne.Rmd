@@ -15,6 +15,7 @@ output:
 ```{r config, include=FALSE}
 type <- "Universités et assimilés"
 libellé = "Université de Bourgogne"
+include_wikidata <- FALSE
 ```
 
 ```{r child = '../fbpESR-main.Rmd', echo = FALSE, warning = FALSE}

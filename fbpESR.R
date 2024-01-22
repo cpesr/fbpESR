@@ -5,7 +5,7 @@ missingdataplot <- ggplot(data=NULL,aes(x=0,y=0,label="Données manquantes")) +
   geom_text(size=10) + xlim(-2,2) + ylim(-2,2) + theme_void()
 
 esr.stats <- kpiESR::esr.pnl %>% na.omit() %>%
-  filter(Type == "Université") %>%
+  filter(Groupe == "Universités et assimilés") %>%
   group_by(kpi, Rentrée) %>%
   summarise(moy = mean(valeur,na.rm=T),med = median(valeur,na.rm=T)) %>%
   arrange(Rentrée)
@@ -17,7 +17,8 @@ netab <- max(netab$n)
   
 
 plot_evolution <- function(fbp, thekpi) {
-  df <- fbp$esr.pnl %>% filter(kpi == thekpi)
+  df <- fbp$esr.pnl %>% filter(kpi == thekpi) %>%
+    mutate(Rentrée = as.character(Rentrée))
   if(nrow(df) == 0) stop("Données manquantes")
   
   fbp$limits.evolution[1] <- min(c(0.01,df$Evolution, fbp$limits.evolution[1]))
@@ -61,8 +62,6 @@ plot_evolutions <- function(fbp, lfc) {
     coord_cartesian(clip="off") 
 }
 
- 
- 
 # plot_evolutions(fbp,kpiesr_lfc$FIN)
 # plot_evolutions(fbp,kpiesr_lfc$ETU)
 # plot_evolutions(fbp,kpiesr_lfc$ENS)
