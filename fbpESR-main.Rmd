@@ -59,16 +59,34 @@ knitr::include_graphics("files/logo_cpesr_sackersgothic.pdf")
 
 # Grands enjeux du moment
 
-## Réformes : Entrée en Maternelle (2009)
+## Réformes
 
 ```{r, out.width = "100%"}
 knitr::include_graphics("files/waffles-bac-1.pdf")
 ``` 
 
-## Réformes : Obtention du Bac (2023)
+## Réformes
 
 ```{r, out.width = "100%"}
 knitr::include_graphics("files/waffles-bac-2.pdf")
+``` 
+
+## Réformes
+
+```{r, out.width = "100%"}
+knitr::include_graphics("files/waffles-bac-3.pdf")
+``` 
+
+## Réformes
+
+```{r, out.width = "100%"}
+knitr::include_graphics("files/waffles-bac-4.pdf")
+``` 
+
+## Réformes
+
+```{r, out.width = "100%"}
+knitr::include_graphics("files/waffles-bac-5.pdf")
 ``` 
 
 ## Réussite vs. Exigence : Le discours
