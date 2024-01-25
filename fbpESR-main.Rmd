@@ -19,6 +19,7 @@ rentrée.ref = 2012
 rentrée.last = 2020
 
 source("fbpESR.R")
+source("fbpESR-extraplots.R")
 fbp <- fbp_get_data(libellé, rentrée.last, rentrée.ref)
 
 #plots <- kpiESR::kpiesr_plot_all(rentrée.last, fbp$UAI, style.kpi=small_style)
@@ -84,29 +85,8 @@ https://www.aefinfo.fr/depeche/616359
 
 ## Réussite vs. Exigence : Les données
 
-```{r LM.univB, fig.asp=8/16, fig.width=7, out.width="100%", fig.align='center'}
-load(file="files/sise.RData")
-
-bind_rows(
-  sise %>%
-    group_by(Rentrée,Niveau = paste(LMD, substr(NIVEAU,2,2), sep="")) %>%
-    summarise(Etudiants = sum(Etudiants)) %>%
-    mutate(Etablissement = "ESR"),
-  sise %>%
-    filter(Etablissement == libellé) %>%
-    group_by(Rentrée,Niveau = paste(LMD, substr(NIVEAU,2,2), sep="")) %>%
-    summarise(Etudiants = sum(Etudiants)) %>%
-    mutate(Etablissement = libellé) ) %>%
-
-  filter(Niveau %in% c("L3","M1")) %>%
-  mutate(Rentrée = ifelse(Niveau == "L3", Rentrée+1,Rentrée)) %>%
-  filter(Rentrée != 2012, Rentrée != 2023) %>%
-  ggplot(aes(x=Rentrée, y= Etudiants, color=Niveau)) +
-  geom_line(linewidth = 1.5) + geom_point(shape = 21, stroke = 2, size = 2, fill="white") + 
-  scale_x_continuous(labels = ~ paste0("L3 ", .x-1,"\nM1 ",.x), breaks = seq(2011,2030,2), name="Cohorte") +
-  scale_y_continuous(labels = ~ paste0(.x/1e3,"k"), name = "Inscriptions étudiantes") +
-  facet_wrap(.~Etablissement, scales = "free_y") +
-  ggtitle("Etudiant⋅e⋅s  inscrit⋅e⋅s en L3 à l'année N et M1 à l'année N+1" )
+```{r, fig.asp=8/16, fig.width=7, out.width="100%", fig.align='center'}
+plot_l3vsM1(libellé)
 ```
 
 
@@ -125,24 +105,29 @@ https://www.senat.fr/questions/base/2023/qSEQ23110915S.html
 
 ## Rémunérations vs. dotation : Les données
 
-```{r scsp.vs.ms3, fig.asp=8/16, out.width="100%"}
-
-kpiESR::esr %>%
-  filter(Etablissement %in% c(type,libellé), Rentrée > 2008) %>%
-  mutate(Etablissement = factor(Etablissement, levels=c(type,libellé))) %>%
-  mutate(diff = kpi.FIN.S.SCSP-kpi.FIN.S.masseSalariale) %>% 
-  ggplot(aes(x=Rentrée,y=diff, color=diff)) +
-  geom_hline(yintercept = 1) +
-  geom_line(size=1) + geom_point(shape = 21, stroke=2,size=2,fill="white") +
-  scale_x_continuous(breaks = scales::pretty_breaks()) +
-  scale_y_continuous(labels = ~ paste(.x/1e6,"M€"), name = "SCSP-MS") +
-  scale_color_distiller(palette="Reds") +
-  facet_wrap(.~Etablissement, scales = "free_y") +
-  ggtitle("Différence entre SCSP et masse salariale des universités") +
-  theme(legend.position = "None", panel.grid.minor.x = element_blank())
+```{r, fig.asp=8/16, out.width="100%"}
+plot_SCSPvsMS(libellé)
 ```
 
 
+## Dotations vs. Insertion pro : Le discours
+
+```{r, out.width = "80%", fig.align='center'}
+knitr::include_graphics("files/AEF-EM-IP.png")
+``` 
+
+- Emmanuel Macron, Président de la république en 2023
+
+Face à HugoDécrypte, via AEF
+
+https://www.youtube.com/watch?v=3Z6HnUJ3hcw
+
+
+## Dotations vs. Insertion pro : Les données
+
+```{r, fig.asp=8/16, out.width="100%"}
+plot_ip(pid)
+```
 
 
 ```{r, eval=FALSE}
