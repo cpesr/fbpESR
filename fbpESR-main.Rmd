@@ -16,7 +16,7 @@ library(ggcpesrthemes)
 theme_set(theme_cpesr())
 
 rentrée.ref = 2012
-rentrée.last = 2020
+rentrée.last = 2021
 
 source("fbpESR.R")
 source("fbpESR-extraplots.R")
